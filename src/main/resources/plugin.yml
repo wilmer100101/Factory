@@ -1,0 +1,4 @@
+name: Factory
+version: '1.0-SNAPSHOT'
+main: se.wilmer.factory.Factory
+api-version: '1.21'

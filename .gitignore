@@ -1,0 +1,5 @@
+/run/
+/build/
+/.idea/
+/.gradle/
+/src/main/java/se/wilmer/factory/test/
