@@ -38,6 +38,7 @@ public class WireConnector {
             frog.setAI(false);
             frog.setGravity(false);
             frog.setInvulnerable(true);
+            frog.setVisibleByDefault(false);
         });
 
         Frog secondEntity = world.spawn(secondBlock.getLocation(), Frog.class, frog -> {
@@ -45,6 +46,7 @@ public class WireConnector {
             frog.setAI(false);
             frog.setGravity(false);
             frog.setInvulnerable(true);
+            frog.setVisibleByDefault(false);
         });
 
         firstEntity.setLeashHolder(secondEntity);

@@ -7,6 +7,7 @@ public class WireManager {
     private final WireConnector wireConnector;
     private final WireDisconnector wireDisconnector;
     private final WireSelector wireSelector;
+    private final WireDisplay wireDisplay;
 
     public WireManager(Factory plugin) {
         this.plugin = plugin;
@@ -14,6 +15,7 @@ public class WireManager {
         wireConnector = new WireConnector(plugin);
         wireDisconnector = new WireDisconnector(plugin);
         wireSelector = new WireSelector(plugin, this);
+        wireDisplay = new WireDisplay(plugin);
     }
 
     public WireConnector getWireConnector() {
@@ -26,5 +28,9 @@ public class WireManager {
 
     public WireSelector getWireSelector() {
         return wireSelector;
+    }
+
+    public WireDisplay getWireDisplay() {
+        return wireDisplay;
     }
 }
