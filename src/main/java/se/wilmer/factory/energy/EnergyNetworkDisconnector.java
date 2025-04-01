@@ -44,6 +44,9 @@ public class EnergyNetworkDisconnector {
             List<UUID> firstNetworkComponents = getComponentNetwork(componentsConnections, firstComponentUUID, new ArrayList<>(Collections.singletonList(firstComponentUUID)));
             List<UUID> secondNetworkComponents = getComponentNetwork(componentsConnections, secondComponentUUID, new ArrayList<>(Collections.singletonList(secondComponentUUID)));
 
+            //TODO: Varför skapar den inte nya networks?
+            System.out.println("FirstNetworkComponents");
+
             if (firstNetworkComponents.equals(secondNetworkComponents)) {
                 return true;
             }
@@ -135,9 +138,9 @@ public class EnergyNetworkDisconnector {
             newComponentsConnections.put(uuid, oldComponentsConnections.get(uuid));
         }
 
-        UUID firstNetworkUUID = UUID.randomUUID();
-        EnergyNetwork energyNetwork = new EnergyNetwork(plugin, firstNetworkUUID, newComponentsConnections);
-        energyNetworkManager.getSerializer().serializeNetwork(firstNetworkUUID);
+        UUID newNetworkUUID = UUID.randomUUID();
+        EnergyNetwork energyNetwork = new EnergyNetwork(plugin, newNetworkUUID, newComponentsConnections);
+        energyNetworkManager.getSerializer().serializeNetwork(newNetworkUUID);
         energyNetworkManager.getNetworks().add(energyNetwork);
 
         return energyNetwork;

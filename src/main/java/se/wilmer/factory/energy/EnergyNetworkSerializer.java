@@ -1,38 +1,36 @@
 package se.wilmer.factory.energy;
 
 import io.leangen.geantyref.TypeToken;
-import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
-import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.util.Types;
 import se.wilmer.factory.Factory;
 
-import javax.naming.ConfigurationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
 
 public class EnergyNetworkSerializer {
-    private static final TypeToken<Map<UUID, List<UUID>>> COMPONENTS_CONNECTIONS_MAP = Types.makeMap(new TypeToken<>() {
-    }, Types.makeList(UUID.class));
+    private static final TypeToken<Map<UUID, List<UUID>>> COMPONENTS_CONNECTIONS_MAP = Types.makeMap(new TypeToken<>() {}, Types.makeList(UUID.class));
+
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     private final Factory plugin;
     private final Path networkDataPath;
-    private final Path networkResourcePath;
     private final Map<UUID, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
 
     public EnergyNetworkSerializer(Factory plugin) {
         this.plugin = plugin;
 
         networkDataPath = plugin.getDataFolder().toPath().resolve("energy_networks");
-        networkResourcePath = Path.of("energy_networks");
     }
 
     public CompletableFuture<List<UUID>> getNetworkUUIDs() {
@@ -48,7 +46,7 @@ public class EnergyNetworkSerializer {
             }
 
             return uuids;
-        });
+        }, executorService);
     }
 
     public CompletableFuture<Void> deleteNetworkFile(UUID networkUUID) {
@@ -69,13 +67,12 @@ public class EnergyNetworkSerializer {
                 locks.remove(networkUUID);
             }
             return null;
-        });
+        }, executorService);
     }
 
     public CompletableFuture<Void> deserializeNetwork(EnergyNetwork network) {
         UUID networkUUID = network.getNetworkID();
         Path path = networkDataPath.resolve(networkUUID.toString());
-        Path resourcePath = networkResourcePath.resolve(networkUUID.toString());
 
         return CompletableFuture.supplyAsync(() -> {
             ReentrantReadWriteLock lock = locks.computeIfAbsent(networkUUID, uuid -> new ReentrantReadWriteLock());
@@ -99,7 +96,7 @@ public class EnergyNetworkSerializer {
             }
 
             return null;
-        });
+        }, executorService);
     }
 
     public CompletableFuture<Optional<EnergyNetwork>> serializeNetwork(UUID networkUUID) {
@@ -111,35 +108,26 @@ public class EnergyNetworkSerializer {
             readLock.lock();
 
             try {
-                ConfigurationNode node;
                 GsonConfigurationLoader loader = GsonConfigurationLoader.builder()
                         .path(path)
                         .build();
 
-                try {
-                    node = loader.load();
-                } catch (ConfigurateException e) {
-                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
+                ConfigurationNode node = loader.load();
+
+                Object object = node.get(COMPONENTS_CONNECTIONS_MAP.getType());
+                if (!(object instanceof Map<?, ?> map)) {
+                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network map: {}", networkUUID);
                     return Optional.empty();
                 }
-
-                try {
-                    Object object = node.get(COMPONENTS_CONNECTIONS_MAP.getType());
-                    if (!(object instanceof Map<?, ?> map)) {
-                        plugin.getComponentLogger().error("Failed to serializeNetwork energy network map: {}", networkUUID);
-                        return Optional.empty();
-                    }
-
-                    return Optional.of(new EnergyNetwork(plugin, networkUUID, getComponentsConnections(map)));
-                } catch (SerializationException e) {
-                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
-                    return Optional.empty();
-                }
+                return Optional.of(new EnergyNetwork(plugin, networkUUID, getComponentsConnections(map)));
+            } catch (IOException e) {
+                plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
+                return Optional.empty();
             } finally {
                 readLock.unlock();
                 locks.remove(networkUUID);
             }
-        });
+        }, executorService);
     }
 
     private ConcurrentHashMap<UUID, List<UUID>> getComponentsConnections(Map<?, ?> map) {

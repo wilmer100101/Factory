@@ -14,8 +14,6 @@ import se.wilmer.factory.component.components.treecutter.TreeCutter;
 import se.wilmer.factory.component.components.treecutter.TreeCutterEntity;
 import se.wilmer.factory.energy.EnergyNetwork;
 import se.wilmer.factory.energy.EnergyNetworkManager;
-import se.wilmer.factory.test.TestCommand;
-import se.wilmer.factory.test.TestCommand2;
 
 public final class Factory extends JavaPlugin {
     private final EnergyNetworkManager energyNetworkManager;
@@ -28,18 +26,11 @@ public final class Factory extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        saveDefaultConfig();
 
         CustomBlockData.registerListener(this);
 
         componentManager.load();
-
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
-                event -> {
-                    event.registrar().register("item_get", new TestCommand(this));
-                    event.registrar().register("item_lookup", new TestCommand2(this));
-                }
-        );
     }
 
     @Override
@@ -55,7 +46,3 @@ public final class Factory extends JavaPlugin {
         return componentManager;
     }
 }
-
-//TODO:
-// - Ett block placeras
-// -
