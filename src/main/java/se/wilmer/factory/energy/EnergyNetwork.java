@@ -24,6 +24,30 @@ public class EnergyNetwork {
         distributor = new EnergyNetworkDistributor(this);
     }
 
+    /**
+     * Schedules an update of the energy network.
+     * <p>
+     * This method ensures that only one network update is scheduled at each tick. If an update is already scheduled,
+     * subsequent calls to this method will be ignored.
+     */
+    public void requestEnergyNetworkUpdate() {
+        if (isNetworkUpdateScheduled) {
+            return;
+        }
+        isNetworkUpdateScheduled = true;
+    }
+
+    private void startUpdateTask() {
+        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if (!isNetworkUpdateScheduled) {
+                return;
+            }
+
+            distributor.updateNetwork();
+            isNetworkUpdateScheduled = false;
+        }, 1L, 1L);
+    }
+
     public void addComponent(EnergyComponent component) {
         components.add(component);
     }
@@ -64,29 +88,5 @@ public class EnergyNetwork {
 
     public UUID getNetworkID() {
         return networkID;
-    }
-
-    /**
-     * Schedules an update of the energy network.
-     * <p>
-     * This method ensures that only one network update is scheduled at each tick. If an update is already scheduled,
-     * subsequent calls to this method will be ignored.
-     */
-    public void requestEnergyNetworkUpdate() {
-        if (isNetworkUpdateScheduled) {
-            return;
-        }
-        isNetworkUpdateScheduled = true;
-    }
-
-    private void startUpdateTask() {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if (!isNetworkUpdateScheduled) {
-                return;
-            }
-
-            distributor.updateNetwork();
-            isNetworkUpdateScheduled = false;
-        }, 1L, 1L);
     }
 }

@@ -1,5 +1,8 @@
 package se.wilmer.factory.energy;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Scheduler;
 import io.leangen.geantyref.TypeToken;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
@@ -9,28 +12,31 @@ import se.wilmer.factory.Factory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 public class EnergyNetworkSerializer {
     private static final TypeToken<Map<UUID, List<UUID>>> COMPONENTS_CONNECTIONS_MAP = Types.makeMap(new TypeToken<>() {}, Types.makeList(UUID.class));
 
+    private final Scheduler scheduler = Scheduler.systemScheduler();
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+    private final LoadingCache<UUID, ReentrantLock> ioLocks;
 
     private final Factory plugin;
     private final Path networkDataPath;
-    private final Map<UUID, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
 
     public EnergyNetworkSerializer(Factory plugin) {
         this.plugin = plugin;
 
         networkDataPath = plugin.getDataFolder().toPath().resolve("energy_networks");
+
+        ioLocks = Caffeine.newBuilder()
+                .expireAfterAccess(Duration.ofMinutes(10))
+                .scheduler(scheduler)
+                .build(key -> new ReentrantLock(true));
     }
 
     public CompletableFuture<List<UUID>> getNetworkUUIDs() {
@@ -51,9 +57,8 @@ public class EnergyNetworkSerializer {
 
     public CompletableFuture<Void> deleteNetworkFile(UUID networkUUID) {
         return CompletableFuture.supplyAsync(() -> {
-            ReentrantReadWriteLock lock = locks.computeIfAbsent(networkUUID, uuid -> new ReentrantReadWriteLock());
-            Lock writeLock = lock.writeLock();
-            writeLock.lock();
+            ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
+            lock.lock();
 
             try {
                 Path path = networkDataPath.resolve(networkUUID.toString());
@@ -63,8 +68,7 @@ public class EnergyNetworkSerializer {
                     plugin.getComponentLogger().error("Could not delete network file {}", networkUUID, e);
                 }
             } finally {
-                writeLock.unlock();
-                locks.remove(networkUUID);
+                lock.unlock();
             }
             return null;
         }, executorService);
@@ -75,9 +79,8 @@ public class EnergyNetworkSerializer {
         Path path = networkDataPath.resolve(networkUUID.toString());
 
         return CompletableFuture.supplyAsync(() -> {
-            ReentrantReadWriteLock lock = locks.computeIfAbsent(networkUUID, uuid -> new ReentrantReadWriteLock());
-            Lock writeLock = lock.writeLock();
-            writeLock.lock();
+            ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
+            lock.lock();
 
             try {
                 GsonConfigurationLoader loader = GsonConfigurationLoader.builder()
@@ -91,8 +94,7 @@ public class EnergyNetworkSerializer {
             } catch (IOException | IllegalArgumentException e) {
                 plugin.getComponentLogger().error("Failed to deserializeNetwork energy network: {}", networkUUID, e);
             } finally {
-                writeLock.unlock();
-                locks.remove(networkUUID);
+                lock.unlock();
             }
 
             return null;
@@ -103,9 +105,8 @@ public class EnergyNetworkSerializer {
         Path path = networkDataPath.resolve(networkUUID.toString());
 
         return CompletableFuture.supplyAsync(() -> {
-            ReentrantReadWriteLock lock = locks.computeIfAbsent(networkUUID, uuid -> new ReentrantReadWriteLock());
-            Lock readLock = lock.readLock();
-            readLock.lock();
+            ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
+            lock.lock();
 
             try {
                 GsonConfigurationLoader loader = GsonConfigurationLoader.builder()
@@ -124,8 +125,7 @@ public class EnergyNetworkSerializer {
                 plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
                 return Optional.empty();
             } finally {
-                readLock.unlock();
-                locks.remove(networkUUID);
+                lock.unlock();
             }
         }, executorService);
     }
