@@ -44,14 +44,14 @@ public class EnergyNetworkDisconnector {
             List<UUID> firstNetworkComponents = getComponentNetwork(componentsConnections, firstComponentUUID, new ArrayList<>(Collections.singletonList(firstComponentUUID)));
             List<UUID> secondNetworkComponents = getComponentNetwork(componentsConnections, secondComponentUUID, new ArrayList<>(Collections.singletonList(secondComponentUUID)));
 
-            //TODO: Varför skapar den inte nya networks?
-            System.out.println("FirstNetworkComponents");
-
             if (firstNetworkComponents.equals(secondNetworkComponents)) {
                 return true;
             }
 
             recreateNetworks(energyNetwork, firstNetworkComponents, secondNetworkComponents, firstComponent, secondComponent);
+
+            energyNetworkManager.getSerializer().deleteNetworkFile(energyNetwork.getNetworkID());
+            energyNetworkManager.getNetworks().remove(energyNetwork);
             return true;
         });
     }
@@ -91,8 +91,6 @@ public class EnergyNetworkDisconnector {
     private void recreateNetworks(EnergyNetwork originalNetwork, List<UUID> firstNetworkComponents, List<UUID> secondNetworkComponents, EnergyComponent firstComponent, EnergyComponent secondComponent) {
         Map<UUID, List<UUID>> clonedComponentsConnections = new HashMap<>(originalNetwork.getComponentsConnections());
         EnergyNetworkSerializer serializer = energyNetworkManager.getSerializer();
-        serializer.deleteNetworkFile(originalNetwork.getNetworkID()).join();
-        energyNetworkManager.getNetworks().remove(originalNetwork);
 
         final boolean shouldRemoveFirstComponent = firstNetworkComponents.size() <= 1;
         final boolean shouldRemoveSecondComponent = secondNetworkComponents.size() <= 1;
@@ -100,25 +98,25 @@ public class EnergyNetworkDisconnector {
         if (shouldRemoveFirstComponent && shouldRemoveSecondComponent) {
             return;
         } else if (shouldRemoveFirstComponent) {
-            clonedComponentsConnections.remove(firstComponent.getUUID());
+            UUID uuid = firstComponent.getUUID();
+            clonedComponentsConnections.remove(uuid);
+            secondNetworkComponents.remove(uuid);
             EnergyNetwork newEnergyNetwork = createNewNetwork(clonedComponentsConnections, secondNetworkComponents);
 
-            List<EnergyComponent> energyComponents = newEnergyNetwork.getComponents();
-            energyComponents.remove(firstComponent);
-            newEnergyNetwork.getComponents().addAll(energyComponents);
+            serializer.deserializeNetwork(newEnergyNetwork);
             return;
         } else if (shouldRemoveSecondComponent) {
-            clonedComponentsConnections.remove(secondComponent.getUUID());
+            UUID uuid = secondComponent.getUUID();
+            clonedComponentsConnections.remove(uuid);
+            firstNetworkComponents.remove(uuid);
             EnergyNetwork newEnergyNetwork = createNewNetwork(clonedComponentsConnections, firstNetworkComponents);
 
-            List<EnergyComponent> energyComponents = newEnergyNetwork.getComponents();
-            energyComponents.remove(secondComponent);
-            newEnergyNetwork.getComponents().addAll(energyComponents);
+            serializer.deserializeNetwork(newEnergyNetwork);
             return;
         }
 
-        createNewNetwork(clonedComponentsConnections, firstNetworkComponents);
-        createNewNetwork(clonedComponentsConnections, secondNetworkComponents);
+        serializer.deserializeNetwork(createNewNetwork(clonedComponentsConnections, firstNetworkComponents));
+        serializer.deserializeNetwork(createNewNetwork(clonedComponentsConnections, secondNetworkComponents));
     }
 
     /**
@@ -126,7 +124,7 @@ public class EnergyNetworkDisconnector {
      * <p>
      * This method takes an existing mapping of components and connections and builds a new energy network
      * using only the specified components. The new network is assigned a unique identifier and is added
-     * to the collection of managed networks. Additionally, the new network's data is serialized for storage.
+     * to the collection of managed networks. The usedComponents is also added to the new network.
      *
      * @param oldComponentsConnections The old components connections from an existing network.
      * @param usedComponents The components that should be included in the new network.
@@ -140,7 +138,8 @@ public class EnergyNetworkDisconnector {
 
         UUID newNetworkUUID = UUID.randomUUID();
         EnergyNetwork energyNetwork = new EnergyNetwork(plugin, newNetworkUUID, newComponentsConnections);
-        energyNetworkManager.getSerializer().serializeNetwork(newNetworkUUID);
+        usedComponents.forEach(usedComponent -> energyNetworkManager.getEnergyComponent(usedComponent).ifPresent(energyNetwork::addComponent));
+
         energyNetworkManager.getNetworks().add(energyNetwork);
 
         return energyNetwork;
@@ -165,5 +164,4 @@ public class EnergyNetworkDisconnector {
 
         return connectedComponents;
     }
-
 }

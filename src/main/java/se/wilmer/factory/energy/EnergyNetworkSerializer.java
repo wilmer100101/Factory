@@ -91,7 +91,7 @@ public class EnergyNetworkSerializer {
                 node.set(COMPONENTS_CONNECTIONS_MAP.getType(), network.getComponentsConnections());
 
                 loader.save(node);
-            } catch (IOException | IllegalArgumentException e) {
+            } catch (Exception e) {
                 plugin.getComponentLogger().error("Failed to deserializeNetwork energy network: {}", networkUUID, e);
             } finally {
                 lock.unlock();
