@@ -4,12 +4,11 @@ import io.papermc.paper.entity.Leashable;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import se.wilmer.factory.Factory;
+import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
 import se.wilmer.factory.component.ComponentManager;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public class WireDisconnector {
@@ -52,8 +51,24 @@ public class WireDisconnector {
 
         plugin.getEnergyNetworkManager().getDisconnector().disconnectComponents(firstComponent, secondComponent);
 
-        firstComponent.unload();
-        secondComponent.unload();
+        ComponentData firstData = firstComponent.getData();
+        ComponentData secondData = secondComponent.getData();
+
+        Map<UUID, Wire> firstConnections = firstData.getConnections();
+        Map<UUID, Wire> secondConnections = secondData.getConnections();
+
+        firstConnections.remove(secondComponent.getUUID());
+        secondConnections.remove(firstComponent.getUUID());
+
+        firstData.setConnections(firstConnections);
+        secondData.setConnections(secondConnections);
+
+        if (firstConnections.isEmpty()) {
+            firstComponent.unload();
+        }
+        if (secondConnections.isEmpty()) {
+            secondComponent.unload();
+        }
         return true;
     }
 }

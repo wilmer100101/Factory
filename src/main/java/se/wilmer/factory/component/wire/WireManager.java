@@ -18,6 +18,10 @@ public class WireManager {
         wireDisplay = new WireDisplay(plugin);
     }
 
+    public void load() {
+        wireDisplay.load();
+    }
+
     public WireConnector getWireConnector() {
         return wireConnector;
     }

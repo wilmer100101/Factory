@@ -115,12 +115,12 @@ public class EnergyNetworkSerializer {
 
                 ConfigurationNode node = loader.load();
 
-                Object object = node.get(COMPONENTS_CONNECTIONS_MAP.getType());
-                if (!(object instanceof Map<?, ?> map)) {
-                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network map: {}", networkUUID);
+                Map<UUID, List<UUID>> componentsConnections = node.get(COMPONENTS_CONNECTIONS_MAP);
+                if (componentsConnections == null) {
+                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network, could not get components connection map: {}", networkUUID);
                     return Optional.empty();
                 }
-                return Optional.of(new EnergyNetwork(plugin, networkUUID, getComponentsConnections(map)));
+                return Optional.of(new EnergyNetwork(plugin, networkUUID, new ConcurrentHashMap<>(componentsConnections)));
             } catch (IOException e) {
                 plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
                 return Optional.empty();
@@ -128,27 +128,5 @@ public class EnergyNetworkSerializer {
                 lock.unlock();
             }
         }, executorService);
-    }
-
-    private ConcurrentHashMap<UUID, List<UUID>> getComponentsConnections(Map<?, ?> map) {
-        ConcurrentHashMap<UUID, List<UUID>> componentsConnections = new ConcurrentHashMap<>();
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            if (!(entry.getKey() instanceof UUID componentUUID)) {
-                continue;
-            }
-            if (!(entry.getValue() instanceof List<?> connectedComponents)) {
-                continue;
-            }
-            List<UUID> connectedComponentsList = new ArrayList<>();
-            for (Object connectedComponent : connectedComponents) {
-                if (!(connectedComponent instanceof UUID connectedComponentUUID)) {
-                    continue;
-                }
-                connectedComponentsList.add(connectedComponentUUID);
-            }
-
-            componentsConnections.put(componentUUID, connectedComponentsList);
-        }
-        return componentsConnections;
     }
 }

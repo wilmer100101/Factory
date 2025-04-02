@@ -1,11 +1,8 @@
 package se.wilmer.factory.component.wire;
 
-import io.papermc.paper.entity.Leashable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
 import se.wilmer.factory.Factory;
 
@@ -13,61 +10,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WireDisplay {
-    private final Map<Player, Wire> displayWires = new HashMap<>();
+    private final Factory plugin;
+    private final Map<Player, Location> displayLocations = new HashMap<>();
 
     public WireDisplay(Factory plugin) {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, this::updateWirePositions, 1L, 1L);
+        this.plugin = plugin;
     }
 
-    public void displayWire(Player player, Block block) {
-        World world = player.getWorld();
-
-        Frog firstEntity = world.spawn(block.getLocation(), Frog.class, frog -> {
-            frog.setSilent(true);
-            frog.setAI(false);
-            frog.setGravity(false);
-            frog.setInvulnerable(true);
-            frog.setVisibleByDefault(false);
-        });
-
-        Frog secondEntity = world.spawn(player.getLocation(), Frog.class, frog -> {
-            frog.setSilent(true);
-            frog.setAI(false);
-            frog.setGravity(false);
-            frog.setInvulnerable(true);
-            frog.setVisibleByDefault(false);
-        });
-
-        firstEntity.setLeashHolder(secondEntity);
+    public void load() {
+        plugin.getServer().getScheduler().runTaskTimer(plugin, this::updateDisplays, 1L, 10L);
     }
 
-    public void removeWire(Player player) {
-        Wire wire = displayWires.get(player);
-        if (wire == null) {
-            return;
-        }
-
-        World world = player.getWorld();
-        Entity firstEntity = world.getEntity(wire.firstEntityUUID());
-        Entity secondEntity = world.getEntity(wire.secondEntityUUID());
-
-        if (!(firstEntity instanceof Leashable firstLeashable) || secondEntity == null) {
-            return;
-        }
-
-        firstLeashable.setLeashHolder(null);
-        secondEntity.remove();
-        firstEntity.remove();
-
-        displayWires.remove(player);
+    public void displayFirstLocation(Player player, Location blockLocation) {
+        player.sendActionBar(formatDisplay(blockLocation));
+        displayLocations.put(player, blockLocation);
     }
 
-    public void updateWirePositions() {
-        displayWires.forEach((player, wire) -> {
-            Entity entity = player.getWorld().getEntity(wire.firstEntityUUID());
-            if (entity != null) {
-                entity.teleport(player);
-            }
+    public void removeDisplay(Player player) {
+        player.sendActionBar(Component.text());
+        displayLocations.remove(player);
+    }
+
+    public void updateDisplays() {
+        displayLocations.forEach((player, location) -> {
+            player.sendActionBar(formatDisplay(location));
         });
+    }
+
+    private Component formatDisplay(Location location) {
+        return Component.text("Linking from: " + location.x() + ", " + location.y() + ", " + location.z()).color(NamedTextColor.YELLOW);
     }
 }

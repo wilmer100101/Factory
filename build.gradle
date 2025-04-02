@@ -4,6 +4,8 @@ plugins {
 }
 
 shadowJar {
+    relocate 'com.jeff_media.morepersistentdatatypes', 'se.wilmer.morepersistentdatatypes'
+    relocate 'com.jeff_media.customblockdata', 'se.wilmer.customblockdata'
 }
 
 group = 'se.wilmer'

@@ -69,6 +69,6 @@ public class ComponentListener implements Listener {
 
         WireManager wireManager = componentManager.getWireManager();
         wireManager.getWireSelector().removePlayerSelection(uuid);
-        wireManager.getWireDisplay().removeWire(player);
+        wireManager.getWireDisplay().removeDisplay(player);
     }
 }

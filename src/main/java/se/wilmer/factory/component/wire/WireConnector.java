@@ -1,9 +1,8 @@
 package se.wilmer.factory.component.wire;
 
-import io.papermc.paper.entity.Leashable;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Frog;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
@@ -33,34 +32,31 @@ public class WireConnector {
         Block secondBlock = secondComponent.getBlock();
 
         World world = firstBlock.getWorld();
-        Frog firstEntity = world.spawn(firstBlock.getLocation(), Frog.class, frog -> {
-            frog.setSilent(true);
-            frog.setAI(false);
-            frog.setGravity(false);
-            frog.setInvulnerable(true);
-            frog.setVisibleByDefault(false);
-        });
-
-        Frog secondEntity = world.spawn(secondBlock.getLocation(), Frog.class, frog -> {
-            frog.setSilent(true);
-            frog.setAI(false);
-            frog.setGravity(false);
-            frog.setInvulnerable(true);
-            frog.setVisibleByDefault(false);
-        });
+        Frog firstEntity = spawnWireEntity(world, firstBlock.getLocation());
+        Frog secondEntity = spawnWireEntity(world, secondBlock.getLocation());
 
         firstEntity.setLeashHolder(secondEntity);
 
-        ComponentData firstComponentData = firstComponent.getData();
-        Map<UUID, Wire> firstConnections = firstComponentData.getConnections();
-        firstConnections.put(secondComponent.getUUID(), new Wire(firstEntity.getUniqueId(), secondEntity.getUniqueId()));
-        firstComponentData.setConnections(firstConnections);
-
-        ComponentData secondComponentData = secondComponent.getData();
-        Map<UUID, Wire> secondConnections = secondComponentData.getConnections();
-        secondConnections.put(firstComponent.getUUID(), new Wire(firstEntity.getUniqueId(), secondEntity.getUniqueId()));
-        secondComponentData.setConnections(secondConnections);
+        updateComponentConnections(firstComponent, secondComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+        updateComponentConnections(secondComponent, firstComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
 
         return CompletableFuture.completedFuture(true);
+    }
+
+    private Frog spawnWireEntity(World world, Location location) {
+        return world.spawn(location, Frog.class, frog -> {
+            frog.setSilent(true);
+            frog.setAI(false);
+            frog.setGravity(false);
+            frog.setInvulnerable(true);
+            frog.setInvisible(true);
+        });
+    }
+
+    private void updateComponentConnections(ComponentEntity<?> component, ComponentEntity<?> otherComponent, UUID firstEntityUUID, UUID secondEntityUUID) {
+        ComponentData componentData = component.getData();
+        Map<UUID, Wire> connections = componentData.getConnections();
+        connections.put(otherComponent.getUUID(), new Wire(firstEntityUUID, secondEntityUUID));
+        componentData.setConnections(connections);
     }
 }

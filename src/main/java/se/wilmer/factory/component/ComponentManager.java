@@ -41,6 +41,8 @@ public class ComponentManager {
     public void load() {
         plugin.getServer().getPluginManager().registerEvents(new ComponentListener(this), plugin);
 
+        wireManager.load();
+
         registry.register();
     }
 

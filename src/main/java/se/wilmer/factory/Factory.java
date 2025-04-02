@@ -1,6 +1,7 @@
 package se.wilmer.factory;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 import se.wilmer.factory.component.ComponentManager;
 import se.wilmer.factory.energy.EnergyNetworkManager;

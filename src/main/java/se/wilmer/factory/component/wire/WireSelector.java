@@ -33,26 +33,23 @@ public class WireSelector {
         }
 
         CustomBlockData firstCustomBlockData = new CustomBlockData(firstBlock, plugin);
-        String firstType = firstCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
-        if (firstType == null) {
-            return;
-        }
-
         CustomBlockData secondCustomBlockData = firstSelectedList.get(player.getUniqueId());
         if (secondCustomBlockData == null) {
-            wireManager.getWireDisplay().displayWire(player, firstBlock);
+            wireManager.getWireDisplay().displayFirstLocation(player, firstBlock.getLocation());
             firstSelectedList.put(player.getUniqueId(), firstCustomBlockData);
             return;
         }
-        firstSelectedList.remove(player.getUniqueId());
-        wireManager.getWireDisplay().removeWire(player);
 
-        if (isDisconnectComponents(firstCustomBlockData, secondCustomBlockData)) {
+        firstSelectedList.remove(player.getUniqueId());
+        wireManager.getWireDisplay().removeDisplay(player);
+
+        String firstType = firstCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
+        String secondType = secondCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
+        if (firstType == null || secondType == null) {
             return;
         }
 
-        String secondType = secondCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
-        if (secondType == null) {
+        if (tryDisconnectComponents(firstCustomBlockData, secondCustomBlockData)) {
             return;
         }
 
@@ -80,7 +77,7 @@ public class WireSelector {
                 .findAny();
     }
 
-    private boolean isDisconnectComponents(CustomBlockData firstCustomBlockData, CustomBlockData secondCustomBlockData) {
+    private boolean tryDisconnectComponents(CustomBlockData firstCustomBlockData, CustomBlockData secondCustomBlockData) {
         ComponentManager componentManager = plugin.getComponentManager();
         NamespacedKey uuidKey = componentManager.getUUIDKey();
 

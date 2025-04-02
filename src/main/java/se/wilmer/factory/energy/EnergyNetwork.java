@@ -22,6 +22,8 @@ public class EnergyNetwork {
         this.componentsConnections = componentsConnections;
 
         distributor = new EnergyNetworkDistributor(this);
+
+        plugin.getServer().getScheduler().runTaskTimer(plugin, this::startUpdateTask, 1L, 1L);
     }
 
     /**
@@ -31,9 +33,6 @@ public class EnergyNetwork {
      * subsequent calls to this method will be ignored.
      */
     public void requestEnergyNetworkUpdate() {
-        if (isNetworkUpdateScheduled) {
-            return;
-        }
         isNetworkUpdateScheduled = true;
     }
 
