@@ -27,6 +27,10 @@ public class WireSelector {
         this.wireManager = wireManager;
     }
 
+    public void removePlayerSelection(UUID uuid) {
+        firstSelectedList.remove(uuid);
+    }
+
     public void selectComponent(Player player, Block firstBlock, ItemStack mainHand) {
         if (!mainHand.isSimilar(WIRE_ITEM)) {
             return;
@@ -43,38 +47,61 @@ public class WireSelector {
         firstSelectedList.remove(player.getUniqueId());
         wireManager.getWireDisplay().removeDisplay(player);
 
-        String firstType = firstCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
-        String secondType = secondCustomBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
-        if (firstType == null || secondType == null) {
-            return;
-        }
-
         if (tryDisconnectComponents(firstCustomBlockData, secondCustomBlockData)) {
             return;
         }
 
-        List<Component> components = plugin.getComponentManager().getRegistry().getComponents();
-        Optional<Component> firstComponent = findComponent(components, firstType);
-        Optional<Component> secondComponent = findComponent(components, secondType);
-
-        if (firstComponent.isEmpty() || secondComponent.isEmpty()) {
+        ComponentManager componentManager = plugin.getComponentManager();
+        String firstType = firstCustomBlockData.get(componentManager.getTypeKey(), PersistentDataType.STRING);
+        String secondType = secondCustomBlockData.get(componentManager.getTypeKey(), PersistentDataType.STRING);
+        UUID firstUUID = firstCustomBlockData.get(componentManager.getUUIDKey(), DataType.UUID);
+        UUID secondUUID = secondCustomBlockData.get(componentManager.getUUIDKey(), DataType.UUID);
+        if (firstType == null || secondType == null || firstUUID == null || secondUUID == null) {
             return;
         }
 
-        ComponentEntity<?> firstComponentEntity = firstComponent.get().createEntity(firstBlock);
-        ComponentEntity<?> secondComponentEntity = secondComponent.get().createEntity(secondCustomBlockData.getBlock());
-
-        wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity);
+        tryConnectComponents(firstBlock, firstUUID, secondUUID, firstType, secondType, secondCustomBlockData);
     }
 
-    public void removePlayerSelection(UUID uuid) {
-        firstSelectedList.remove(uuid);
+    private void tryConnectComponents(Block firstBlock, UUID firstUUID, UUID secondUUID, String firstType, String secondType, CustomBlockData secondCustomBlockData) {
+        ComponentManager componentManager = plugin.getComponentManager();
+        List<Component> components = plugin.getComponentManager().getRegistry().getComponents();
+        ComponentEntity<?> firstComponentEntity = componentManager.getComponentEntity(firstUUID).orElse(null);
+        ComponentEntity<?> secondComponentEntity = componentManager.getComponentEntity(secondUUID).orElse(null);
+
+        boolean isCreateFirstEntity = false;
+        boolean isCreateSecondEntity = false;
+
+        if (firstComponentEntity == null) {
+            firstComponentEntity = createComponentEntity(components, firstType, firstBlock).orElse(null);
+            isCreateFirstEntity = true;
+        }
+
+        if (secondComponentEntity == null) {
+            secondComponentEntity = createComponentEntity(components, secondType, secondCustomBlockData.getBlock()).orElse(null);
+            isCreateSecondEntity = true;
+        }
+
+        if (firstComponentEntity == null || secondComponentEntity == null) {
+            return;
+        }
+
+        if (wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity).join()) {
+            if (isCreateFirstEntity) {
+                firstComponentEntity.load();
+            }
+            if (isCreateSecondEntity) {
+                secondComponentEntity.load();
+            }
+        }
     }
 
-    private Optional<Component> findComponent(List<Component> components, String componentId) {
-        return components.stream()
-                .filter(component -> component.getId().equals(componentId))
+    private Optional<ComponentEntity<?>> createComponentEntity(List<Component> components, String componentId, Block block) {
+        Optional<Component> component = components.stream()
+                .filter(c -> c.getId().equals(componentId))
                 .findAny();
+
+        return component.map(value -> value.createEntity(block));
     }
 
     private boolean tryDisconnectComponents(CustomBlockData firstCustomBlockData, CustomBlockData secondCustomBlockData) {

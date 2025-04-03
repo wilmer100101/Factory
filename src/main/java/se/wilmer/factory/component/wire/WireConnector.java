@@ -25,9 +25,6 @@ public class WireConnector {
             return CompletableFuture.completedFuture(false);
         }
 
-        firstComponent.load();
-        secondComponent.load();
-
         Block firstBlock = firstComponent.getBlock();
         Block secondBlock = secondComponent.getBlock();
 

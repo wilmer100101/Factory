@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import se.wilmer.factory.Factory;
+import se.wilmer.factory.component.wire.WireDataType;
 import se.wilmer.factory.energy.EnergyNetworkManager;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class ComponentLoader {
     }
 
     /**
-     * Loads all the components in the chunk
+     * Loads all the components in the chunk, if a component is not connected to a network, will it not be loaded.
      *
      * @param chunk The loaded chunk.
      */
@@ -32,6 +33,10 @@ public class ComponentLoader {
 
         for (Block block : CustomBlockData.getBlocksWithCustomData(plugin, chunk)) {
             final PersistentDataContainer customBlockData = new CustomBlockData(block, plugin);
+
+            if (!customBlockData.has(componentManager.getConnectionsKey())) {
+                continue;
+            }
 
             String componentId = customBlockData.get(componentTypeKey, PersistentDataType.STRING);
             if (componentId == null) {

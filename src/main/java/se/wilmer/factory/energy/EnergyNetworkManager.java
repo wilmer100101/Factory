@@ -4,13 +4,14 @@ import se.wilmer.factory.Factory;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EnergyNetworkManager {
     private final Factory plugin;
     private final EnergyNetworkSerializer serializer;
     private final EnergyNetworkDisconnector disconnector;
     private final EnergyNetworkConnector connector;
-    private final List<EnergyNetwork> networks = new ArrayList<>();
+    private final CopyOnWriteArrayList<EnergyNetwork> networks = new CopyOnWriteArrayList <>();
 
     public EnergyNetworkManager(Factory plugin) {
         this.plugin = plugin;
@@ -21,7 +22,7 @@ public class EnergyNetworkManager {
     }
 
     public void loadComponent(EnergyComponent component) {
-        getComponentNetwork(component).thenAccept(optionalNetwork -> {
+        getComponentFromAllNetworks(component).thenAccept(optionalNetwork -> {
             if (optionalNetwork.isEmpty()) {
                 return;
             }
@@ -30,27 +31,34 @@ public class EnergyNetworkManager {
             if (!networks.contains(energyNetwork)) {
                 networks.add(energyNetwork);
             }
+
             energyNetwork.addComponent(component);
         });
     }
 
     public void unloadComponent(EnergyComponent component) {
-        getComponentNetwork(component)
-                .thenAcceptAsync(optionalEnergyNetwork -> optionalEnergyNetwork.ifPresent(energyNetwork -> {
+        getComponentFromLoadedNetworks(component)
+                .ifPresent(energyNetwork -> {
                     energyNetwork.removeComponent(component);
 
                     if (energyNetwork.getComponents().isEmpty()) {
                         networks.remove(energyNetwork);
                     }
-                }));
+                });
     }
 
-    public CompletableFuture<Optional<EnergyNetwork>> getComponentNetwork(EnergyComponent energyComponent) {
+    public Optional<EnergyNetwork> getComponentFromLoadedNetworks(EnergyComponent energyComponent) {
         UUID uuid = energyComponent.getUUID();
 
-        Optional<EnergyNetwork> energyNetwork = networks.stream()
+        return networks.stream()
                 .filter(network -> network.getComponents().stream().anyMatch(component -> component.getUUID().equals(uuid)))
                 .findAny();
+    }
+
+    public CompletableFuture<Optional<EnergyNetwork>> getComponentFromAllNetworks(EnergyComponent energyComponent) {
+        UUID uuid = energyComponent.getUUID();
+
+        Optional<EnergyNetwork> energyNetwork = getComponentFromLoadedNetworks(energyComponent);
 
         if (energyNetwork.isPresent()) {
             return CompletableFuture.completedFuture(energyNetwork);
@@ -69,7 +77,7 @@ public class EnergyNetworkManager {
                 if (optionalNetwork.isEmpty()) {
                     continue;
                 }
-                if (optionalNetwork.get().getComponentsConnections(uuid).isEmpty()) {
+                if (!optionalNetwork.get().getComponentsConnections().containsKey(uuid)) {
                     continue;
                 }
 

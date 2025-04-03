@@ -1,11 +1,13 @@
 package se.wilmer.factory.component.components.treecutter;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Interaction;
+import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
@@ -15,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements EnergyConsumer {
-    private UUID uuid = null;
+    private BukkitTask task = null;
     private long currentEnergyLimit = 0L;
     private Block targetBlock = null;
 
@@ -27,12 +29,14 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
     public void spawn() {
         updateTargetBlock();
 
-        plugin.getServer().getScheduler().runTaskTimer(plugin, new TreeCutterTask(this), 0L, 0L);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new TreeCutterTask(this), 0L, 0L);
     }
 
     @Override
     public void despawn() {
-
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     @Override

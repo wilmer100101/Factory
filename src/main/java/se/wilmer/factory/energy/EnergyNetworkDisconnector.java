@@ -19,48 +19,45 @@ public class EnergyNetworkDisconnector {
     /**
      * Disconnect the two components from each other, and creates two new networks if needed.
      *
-     * @implNote We are only getting the first components, network, as they should have the same if they are connected.
-     *
-     * @param firstComponent The first component
+     * @param firstComponent  The first component
      * @param secondComponent The second component
      * @return true, if we were able to disconnect to components from each other, otherwise false.
+     * @implNote We are only getting the first components, network, as they should have the same if they are connected.
      */
-    public CompletableFuture<Boolean> disconnectComponents(EnergyComponent firstComponent, EnergyComponent secondComponent) {
-        return CompletableFuture.supplyAsync(() -> {
-            Optional<EnergyNetwork> optionalEnergyNetwork = energyNetworkManager.getComponentNetwork(firstComponent).join();
-            if (optionalEnergyNetwork.isEmpty()) {
-                return false;
-            }
-            EnergyNetwork energyNetwork = optionalEnergyNetwork.get();
+    public boolean disconnectComponents(EnergyComponent firstComponent, EnergyComponent secondComponent) {
+        Optional<EnergyNetwork> optionalEnergyNetwork = energyNetworkManager.getComponentFromLoadedNetworks(firstComponent);
+        if (optionalEnergyNetwork.isEmpty()) {
+            return false;
+        }
+        EnergyNetwork energyNetwork = optionalEnergyNetwork.get();
 
-            if (!disconnectFromNetwork(energyNetwork, firstComponent, secondComponent)) {
-                return false;
-            }
+        if (!disconnectFromNetwork(energyNetwork, firstComponent, secondComponent)) {
+            return false;
+        }
 
-            UUID firstComponentUUID = firstComponent.getUUID();
-            UUID secondComponentUUID = secondComponent.getUUID();
+        UUID firstComponentUUID = firstComponent.getUUID();
+        UUID secondComponentUUID = secondComponent.getUUID();
 
-            Map<UUID, List<UUID>> componentsConnections = energyNetwork.getComponentsConnections();
-            List<UUID> firstNetworkComponents = getComponentNetwork(componentsConnections, firstComponentUUID, new ArrayList<>(Collections.singletonList(firstComponentUUID)));
-            List<UUID> secondNetworkComponents = getComponentNetwork(componentsConnections, secondComponentUUID, new ArrayList<>(Collections.singletonList(secondComponentUUID)));
+        Map<UUID, List<UUID>> componentsConnections = energyNetwork.getComponentsConnections();
+        List<UUID> firstNetworkComponents = getComponentNetwork(componentsConnections, firstComponentUUID, new ArrayList<>(Collections.singletonList(firstComponentUUID)));
+        List<UUID> secondNetworkComponents = getComponentNetwork(componentsConnections, secondComponentUUID, new ArrayList<>(Collections.singletonList(secondComponentUUID)));
 
-            if (firstNetworkComponents.equals(secondNetworkComponents)) {
-                return true;
-            }
-
-            recreateNetworks(energyNetwork, firstNetworkComponents, secondNetworkComponents, firstComponent, secondComponent);
-
-            energyNetworkManager.getSerializer().deleteNetworkFile(energyNetwork.getNetworkID());
-            energyNetworkManager.getNetworks().remove(energyNetwork);
+        if (firstNetworkComponents.equals(secondNetworkComponents)) {
             return true;
-        });
+        }
+
+        recreateNetworks(energyNetwork, firstNetworkComponents, secondNetworkComponents, firstComponent, secondComponent);
+
+        energyNetworkManager.getSerializer().deleteNetworkFile(energyNetwork.getNetworkID());
+        energyNetworkManager.getNetworks().remove(energyNetwork);
+        return true;
     }
 
     /**
      * Removes connections between two components in the energy network.
      *
-     * @param network The energy network.
-     * @param firstComponent The first component.
+     * @param network         The energy network.
+     * @param firstComponent  The first component.
      * @param secondComponent The second component.
      * @return True if connections were successfully removed; otherwise false.
      */
@@ -82,11 +79,11 @@ public class EnergyNetworkDisconnector {
     /**
      * Recreates energy networks after components are disconnected.
      *
-     * @param originalNetwork The original energy network being split.
-     * @param firstNetworkComponents Components for the first new network.
+     * @param originalNetwork         The original energy network being split.
+     * @param firstNetworkComponents  Components for the first new network.
      * @param secondNetworkComponents Components for the second new network.
-     * @param firstComponent The first energy component.
-     * @param secondComponent The second energy component.
+     * @param firstComponent          The first energy component.
+     * @param secondComponent         The second energy component.
      */
     private void recreateNetworks(EnergyNetwork originalNetwork, List<UUID> firstNetworkComponents, List<UUID> secondNetworkComponents, EnergyComponent firstComponent, EnergyComponent secondComponent) {
         Map<UUID, List<UUID>> clonedComponentsConnections = new HashMap<>(originalNetwork.getComponentsConnections());
@@ -127,7 +124,7 @@ public class EnergyNetworkDisconnector {
      * to the collection of managed networks. The usedComponents is also added to the new network.
      *
      * @param oldComponentsConnections The old components connections from an existing network.
-     * @param usedComponents The components that should be included in the new network.
+     * @param usedComponents           The components that should be included in the new network.
      * @return A new {@link EnergyNetwork}.
      */
     private EnergyNetwork createNewNetwork(Map<UUID, List<UUID>> oldComponentsConnections, List<UUID> usedComponents) {
@@ -149,8 +146,8 @@ public class EnergyNetworkDisconnector {
      * Recursively builds a network of connected components starting from a specified component.
      *
      * @param componentsConnections The map of componentsConnections from the original network.
-     * @param componentUUID The UUID of the component to start building the network from.
-     * @param connectedComponents A list that accumulates the UUIDs of all components in the connected network.
+     * @param componentUUID         The UUID of the component to start building the network from.
+     * @param connectedComponents   A list that accumulates the UUIDs of all components in the connected network.
      * @return A list of UUIDs representing all components that are part of the same connected network as the starting component.
      */
     private List<UUID> getComponentNetwork(Map<UUID, List<UUID>> componentsConnections, UUID componentUUID, List<UUID> connectedComponents) {

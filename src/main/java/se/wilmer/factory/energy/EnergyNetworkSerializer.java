@@ -76,7 +76,7 @@ public class EnergyNetworkSerializer {
 
     public CompletableFuture<Void> deserializeNetwork(EnergyNetwork network) {
         UUID networkUUID = network.getNetworkID();
-        Path path = networkDataPath.resolve(networkUUID.toString());
+        Path path = networkDataPath.resolve(networkUUID.toString() + ".json");
 
         return CompletableFuture.supplyAsync(() -> {
             ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
@@ -102,7 +102,7 @@ public class EnergyNetworkSerializer {
     }
 
     public CompletableFuture<Optional<EnergyNetwork>> serializeNetwork(UUID networkUUID) {
-        Path path = networkDataPath.resolve(networkUUID.toString());
+        Path path = networkDataPath.resolve(networkUUID.toString() + ".json");
 
         return CompletableFuture.supplyAsync(() -> {
             ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
@@ -115,18 +115,41 @@ public class EnergyNetworkSerializer {
 
                 ConfigurationNode node = loader.load();
 
-                Map<UUID, List<UUID>> componentsConnections = node.get(COMPONENTS_CONNECTIONS_MAP);
-                if (componentsConnections == null) {
-                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network, could not get components connection map: {}", networkUUID);
+                Object object = node.get(COMPONENTS_CONNECTIONS_MAP.getType());
+                if (!(object instanceof Map<?, ?> map)) {
+                    plugin.getComponentLogger().error("Failed to serializeNetwork energy network map: {}", networkUUID);
                     return Optional.empty();
                 }
-                return Optional.of(new EnergyNetwork(plugin, networkUUID, new ConcurrentHashMap<>(componentsConnections)));
-            } catch (IOException e) {
+
+                return Optional.of(new EnergyNetwork(plugin, networkUUID, getComponentsConnections(map)));
+            } catch (Exception e) {
                 plugin.getComponentLogger().error("Failed to serializeNetwork energy network: {}", networkUUID, e);
                 return Optional.empty();
             } finally {
                 lock.unlock();
             }
         }, executorService);
+    }
+
+    private ConcurrentHashMap<UUID, List<UUID>> getComponentsConnections(Map<?, ?> map) {
+        ConcurrentHashMap<UUID, List<UUID>> componentsConnections = new ConcurrentHashMap<>();
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (!(entry.getKey() instanceof UUID componentUUID)) {
+                continue;
+            }
+            if (!(entry.getValue() instanceof List<?> connectedComponents)) {
+                continue;
+            }
+            List<UUID> connectedComponentsList = new ArrayList<>();
+            for (Object connectedComponent : connectedComponents) {
+                if (!(connectedComponent instanceof UUID connectedComponentUUID)) {
+                    continue;
+                }
+                connectedComponentsList.add(connectedComponentUUID);
+            }
+
+            componentsConnections.put(componentUUID, connectedComponentsList);
+        }
+        return componentsConnections;
     }
 }

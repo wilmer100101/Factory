@@ -4,7 +4,7 @@ import se.wilmer.factory.Factory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EnergyNetwork {
     private static final int MAX_ITERATION_ATTEMPTS = 4000;
@@ -13,7 +13,7 @@ public class EnergyNetwork {
     private final UUID networkID;
     private final EnergyNetworkDistributor distributor;
     private final ConcurrentHashMap<UUID, List<UUID>> componentsConnections;
-    private final LinkedList<EnergyComponent> components = new LinkedList<>();
+    private final CopyOnWriteArrayList<EnergyComponent> components = new CopyOnWriteArrayList<>();
     private boolean isNetworkUpdateScheduled = false;
 
     public EnergyNetwork(Factory plugin, UUID networkID, ConcurrentHashMap<UUID, List<UUID>> componentsConnections) {
@@ -23,11 +23,11 @@ public class EnergyNetwork {
 
         distributor = new EnergyNetworkDistributor(this);
 
-        plugin.getServer().getScheduler().runTaskTimer(plugin, this::startUpdateTask, 1L, 1L);
+        plugin.getServer().getScheduler().runTaskTimer(plugin, this::runUpdateTask, 1L, 1L);
     }
 
     /**
-     * Schedules an update of the energy network.
+     * Schedules an energy update of the network.
      * <p>
      * This method ensures that only one network update is scheduled at each tick. If an update is already scheduled,
      * subsequent calls to this method will be ignored.
@@ -36,15 +36,13 @@ public class EnergyNetwork {
         isNetworkUpdateScheduled = true;
     }
 
-    private void startUpdateTask() {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if (!isNetworkUpdateScheduled) {
-                return;
-            }
+    private void runUpdateTask() {
+        if (!isNetworkUpdateScheduled) {
+            return;
+        }
 
-            distributor.updateNetwork();
-            isNetworkUpdateScheduled = false;
-        }, 1L, 1L);
+        distributor.updateNetwork();
+        isNetworkUpdateScheduled = false;
     }
 
     public void addComponent(EnergyComponent component) {

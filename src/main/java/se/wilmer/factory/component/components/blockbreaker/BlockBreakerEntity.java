@@ -1,11 +1,13 @@
 package se.wilmer.factory.component.components.blockbreaker;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Interaction;
+import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
@@ -15,6 +17,7 @@ import java.util.Optional;
  * @implNote Using a task that runs every tick is more performance friendly in this cause, because if we would use event, they would call more then one time every tick.
  */
 public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> {
+    private BukkitTask task = null;
     private Block targetBlock = null;
     private long currentBreakingDuration = 0;
 
@@ -26,12 +29,14 @@ public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> {
     public void spawn() {
         updateTargetBlock();
 
-        plugin.getServer().getScheduler().runTaskTimer(plugin, new BlockBreakerTask(this), 0L, 0L);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new BlockBreakerTask(this), 0L, 0L);
     }
 
     @Override
     public void despawn() {
-
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     @Override

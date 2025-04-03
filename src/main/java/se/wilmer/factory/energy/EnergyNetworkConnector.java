@@ -29,7 +29,7 @@ public class EnergyNetworkConnector {
         UUID secondComponentUUID = secondComponent.getUUID();
 
         return CompletableFuture.supplyAsync(() -> {
-            Optional<EnergyNetwork> optionalEnergyNetwork = energyNetworkManager.getComponentNetwork(firstComponent).join();
+            Optional<EnergyNetwork> optionalEnergyNetwork = energyNetworkManager.getComponentFromAllNetworks(firstComponent).join();
             if (optionalEnergyNetwork.isEmpty()) {
                 return false;
             }
@@ -57,8 +57,8 @@ public class EnergyNetworkConnector {
      */
     public CompletableFuture<Boolean> connectComponents(EnergyComponent firstComponent, EnergyComponent secondComponent) {
         return CompletableFuture.supplyAsync(() -> {
-            EnergyNetwork firstNetwork = energyNetworkManager.getComponentNetwork(firstComponent).join().orElse(null);
-            EnergyNetwork secondNetwork = energyNetworkManager.getComponentNetwork(secondComponent).join().orElse(null);
+            EnergyNetwork firstNetwork = energyNetworkManager.getComponentFromAllNetworks(firstComponent).join().orElse(null);
+            EnergyNetwork secondNetwork = energyNetworkManager.getComponentFromAllNetworks(secondComponent).join().orElse(null);
 
             if (secondNetwork != null && firstNetwork == secondNetwork) {
                 return false;

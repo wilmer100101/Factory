@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Interaction;
+import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * @implNote Using a task that runs every tick is more performance friendly in this cause, because if we would use event, they would call more then one time every tick.
  */
 public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> {
+    private BukkitTask task = null;
     private Block targetBlock = null;
 
     public BlockPlacerEntity(Factory plugin, BlockPlacer component, ComponentData data, Block block) {
@@ -26,12 +28,14 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> {
     public void spawn() {
         updateTargetBlock();
 
-        plugin.getServer().getScheduler().runTaskTimer(plugin, new BlockPlacerTask(this), 0L, 0L);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new BlockPlacerTask(this), 0L, 0L);
     }
 
     @Override
     public void despawn() {
-
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     @Override

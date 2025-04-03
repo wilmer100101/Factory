@@ -2,6 +2,8 @@ package se.wilmer.factory.component;
 
 import com.jeff_media.customblockdata.events.CustomBlockDataRemoveEvent;
 import com.jeff_media.morepersistentdatatypes.DataType;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import se.wilmer.factory.component.wire.WireManager;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 
 public class ComponentListener implements Listener {
