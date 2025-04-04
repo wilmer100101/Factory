@@ -1,5 +1,6 @@
 package se.wilmer.factory.energy;
 
+import org.bukkit.scheduler.BukkitScheduler;
 import se.wilmer.factory.Factory;
 
 import java.util.*;
@@ -60,24 +61,26 @@ public class EnergyNetworkConnector {
             EnergyNetwork firstNetwork = energyNetworkManager.getComponentFromAllNetworks(firstComponent).join().orElse(null);
             EnergyNetwork secondNetwork = energyNetworkManager.getComponentFromAllNetworks(secondComponent).join().orElse(null);
 
+            BukkitScheduler scheduler = plugin.getServer().getScheduler();
+
             if (secondNetwork != null && firstNetwork == secondNetwork) {
                 return false;
             }
 
             if (firstNetwork == null && secondNetwork == null) {
-                createNewNetwork(firstComponent, secondComponent);
+                scheduler.runTask(plugin, () -> createNewNetwork(firstComponent, secondComponent));
                 return true;
             }
 
             if (firstNetwork != null && secondNetwork != null) {
-                mergeNetworks(firstNetwork, secondNetwork, firstComponent.getUUID(), secondComponent.getUUID());
+                scheduler.runTask(plugin, () -> mergeNetworks(firstNetwork, secondNetwork, firstComponent.getUUID(), secondComponent.getUUID()));
                 return true;
             }
 
             if (firstNetwork != null) {
-                addComponentToNetwork(secondComponent, firstComponent, firstNetwork);
+                scheduler.runTask(plugin, () -> addComponentToNetwork(secondComponent, firstComponent, firstNetwork));
             } else {
-                addComponentToNetwork(firstComponent, secondComponent, secondNetwork);
+                scheduler.runTask(plugin, () -> addComponentToNetwork(firstComponent, secondComponent, secondNetwork));
             }
 
             return true;
@@ -139,7 +142,7 @@ public class EnergyNetworkConnector {
         UUID firstComponentUUID = firstComponent.getUUID();
         UUID secondComponentUUID = secondComponent.getUUID();
 
-        ConcurrentHashMap<UUID, List<UUID>> componentsConnections = new ConcurrentHashMap<>();
+        HashMap<UUID, List<UUID>> componentsConnections = new HashMap<>();
         componentsConnections.put(firstComponentUUID, new ArrayList<>(Collections.singletonList(secondComponentUUID)));
         componentsConnections.put(secondComponentUUID, new ArrayList<>(Collections.singletonList(firstComponentUUID)));
 

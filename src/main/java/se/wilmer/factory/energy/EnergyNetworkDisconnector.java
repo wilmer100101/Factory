@@ -128,7 +128,7 @@ public class EnergyNetworkDisconnector {
      * @return A new {@link EnergyNetwork}.
      */
     private EnergyNetwork createNewNetwork(Map<UUID, List<UUID>> oldComponentsConnections, List<UUID> usedComponents) {
-        ConcurrentHashMap<UUID, List<UUID>> newComponentsConnections = new ConcurrentHashMap<>();
+        HashMap<UUID, List<UUID>> newComponentsConnections = new HashMap<>();
         for (UUID uuid : usedComponents) {
             newComponentsConnections.put(uuid, oldComponentsConnections.get(uuid));
         }

@@ -69,31 +69,41 @@ public class WireSelector {
         ComponentEntity<?> firstComponentEntity = componentManager.getComponentEntity(firstUUID).orElse(null);
         ComponentEntity<?> secondComponentEntity = componentManager.getComponentEntity(secondUUID).orElse(null);
 
-        boolean isCreateFirstEntity = false;
-        boolean isCreateSecondEntity = false;
+        final boolean isCreateFirstEntity;
+        final boolean isCreateSecondEntity;
 
         if (firstComponentEntity == null) {
             firstComponentEntity = createComponentEntity(components, firstType, firstBlock).orElse(null);
             isCreateFirstEntity = true;
+        } else {
+            isCreateFirstEntity = false;
         }
 
         if (secondComponentEntity == null) {
             secondComponentEntity = createComponentEntity(components, secondType, secondCustomBlockData.getBlock()).orElse(null);
             isCreateSecondEntity = true;
+        } else {
+            isCreateSecondEntity = false;
         }
 
         if (firstComponentEntity == null || secondComponentEntity == null) {
             return;
         }
 
-        if (wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity).join()) {
+        final ComponentEntity<?> finalFirstComponentEntity = firstComponentEntity;
+        final ComponentEntity<?> finalSecondComponentEntity = secondComponentEntity;
+        wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity).thenAccept(connected -> {
+            if (!connected) {
+                return;
+            }
+
             if (isCreateFirstEntity) {
-                firstComponentEntity.load();
+                finalFirstComponentEntity.load();
             }
             if (isCreateSecondEntity) {
-                secondComponentEntity.load();
+                finalSecondComponentEntity.load();
             }
-        }
+        });
     }
 
     private Optional<ComponentEntity<?>> createComponentEntity(List<Component> components, String componentId, Block block) {

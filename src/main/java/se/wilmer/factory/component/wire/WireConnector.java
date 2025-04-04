@@ -20,24 +20,27 @@ public class WireConnector {
     }
 
     public CompletableFuture<Boolean> connectComponents(ComponentEntity<?> firstComponent, ComponentEntity<?> secondComponent) {
-        boolean connected = plugin.getEnergyNetworkManager().getConnector().connectComponents(firstComponent, secondComponent).join();
-        if (!connected) {
-            return CompletableFuture.completedFuture(false);
-        }
+        return plugin.getEnergyNetworkManager().getConnector().connectComponents(firstComponent, secondComponent).thenApply(connected -> {
+            if (!connected) {
+                return false;
+            }
 
-        Block firstBlock = firstComponent.getBlock();
-        Block secondBlock = secondComponent.getBlock();
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                Block firstBlock = firstComponent.getBlock();
+                Block secondBlock = secondComponent.getBlock();
 
-        World world = firstBlock.getWorld();
-        Frog firstEntity = spawnWireEntity(world, firstBlock.getLocation());
-        Frog secondEntity = spawnWireEntity(world, secondBlock.getLocation());
+                World world = firstBlock.getWorld();
+                Frog firstEntity = spawnWireEntity(world, firstBlock.getLocation());
+                Frog secondEntity = spawnWireEntity(world, secondBlock.getLocation());
 
-        firstEntity.setLeashHolder(secondEntity);
+                firstEntity.setLeashHolder(secondEntity);
 
-        updateComponentConnections(firstComponent, secondComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
-        updateComponentConnections(secondComponent, firstComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+                updateComponentConnections(firstComponent, secondComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+                updateComponentConnections(secondComponent, firstComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+            });
 
-        return CompletableFuture.completedFuture(true);
+            return true;
+        });
     }
 
     private Frog spawnWireEntity(World world, Location location) {

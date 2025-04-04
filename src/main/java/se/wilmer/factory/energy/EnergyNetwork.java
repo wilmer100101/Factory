@@ -3,8 +3,6 @@ package se.wilmer.factory.energy;
 import se.wilmer.factory.Factory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EnergyNetwork {
     private static final int MAX_ITERATION_ATTEMPTS = 4000;
@@ -12,11 +10,11 @@ public class EnergyNetwork {
     private final Factory plugin;
     private final UUID networkID;
     private final EnergyNetworkDistributor distributor;
-    private final ConcurrentHashMap<UUID, List<UUID>> componentsConnections;
-    private final CopyOnWriteArrayList<EnergyComponent> components = new CopyOnWriteArrayList<>();
+    private final Map<UUID, List<UUID>> componentsConnections;
+    private final ArrayList<EnergyComponent> components = new ArrayList<>();
     private boolean isNetworkUpdateScheduled = false;
 
-    public EnergyNetwork(Factory plugin, UUID networkID, ConcurrentHashMap<UUID, List<UUID>> componentsConnections) {
+    public EnergyNetwork(Factory plugin, UUID networkID, HashMap<UUID, List<UUID>> componentsConnections) {
         this.plugin = plugin;
         this.networkID = networkID;
         this.componentsConnections = componentsConnections;

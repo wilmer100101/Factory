@@ -11,7 +11,7 @@ public class EnergyNetworkManager {
     private final EnergyNetworkSerializer serializer;
     private final EnergyNetworkDisconnector disconnector;
     private final EnergyNetworkConnector connector;
-    private final CopyOnWriteArrayList<EnergyNetwork> networks = new CopyOnWriteArrayList <>();
+    private final ArrayList<EnergyNetwork> networks = new ArrayList<>();
 
     public EnergyNetworkManager(Factory plugin) {
         this.plugin = plugin;
@@ -22,7 +22,7 @@ public class EnergyNetworkManager {
     }
 
     public void loadComponent(EnergyComponent component) {
-        getComponentFromAllNetworks(component).thenAccept(optionalNetwork -> {
+        getComponentFromAllNetworks(component).thenAccept(optionalNetwork -> plugin.getServer().getScheduler().runTask(plugin, () -> {
             if (optionalNetwork.isEmpty()) {
                 return;
             }
@@ -33,7 +33,7 @@ public class EnergyNetworkManager {
             }
 
             energyNetwork.addComponent(component);
-        });
+        }));
     }
 
     public void unloadComponent(EnergyComponent component) {

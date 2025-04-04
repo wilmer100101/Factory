@@ -56,12 +56,13 @@ public class EnergyNetworkSerializer {
     }
 
     public CompletableFuture<Void> deleteNetworkFile(UUID networkUUID) {
+        plugin.getComponentLogger().warn("Deleting networkUUID: " + networkUUID);
         return CompletableFuture.supplyAsync(() -> {
             ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
             lock.lock();
 
             try {
-                Path path = networkDataPath.resolve(networkUUID.toString());
+                Path path = networkDataPath.resolve(networkUUID.toString() + ".json");
                 try {
                     Files.delete(path);
                 } catch (IOException e) {
@@ -131,8 +132,8 @@ public class EnergyNetworkSerializer {
         }, executorService);
     }
 
-    private ConcurrentHashMap<UUID, List<UUID>> getComponentsConnections(Map<?, ?> map) {
-        ConcurrentHashMap<UUID, List<UUID>> componentsConnections = new ConcurrentHashMap<>();
+    private HashMap<UUID, List<UUID>> getComponentsConnections(Map<?, ?> map) {
+        HashMap<UUID, List<UUID>> componentsConnections = new HashMap<>();
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (!(entry.getKey() instanceof UUID componentUUID)) {
                 continue;
