@@ -50,6 +50,10 @@ public class TreeCutterTask implements Runnable {
 
     @Override
     public void run() {
+        if (treeCutterEntity.getMaxEnergyConsumption() > treeCutterEntity.getCurrentEnergyLimit()) {
+            return;
+        }
+
         Optional<Block> optionalTargetBlock = treeCutterEntity.getTargetBlock();
         if (optionalTargetBlock.isEmpty()) {
             return;

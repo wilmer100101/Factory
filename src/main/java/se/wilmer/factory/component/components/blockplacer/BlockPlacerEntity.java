@@ -10,15 +10,17 @@ import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.energy.EnergyConsumer;
 
 import java.util.Optional;
 
 /**
  * @implNote Using a task that runs every tick is more performance friendly in this cause, because if we would use event, they would call more then one time every tick.
  */
-public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> {
+public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements EnergyConsumer {
     private BukkitTask task = null;
     private Block targetBlock = null;
+    private long currentEnergyLimit = 0L;
 
     public BlockPlacerEntity(Factory plugin, BlockPlacer component, ComponentData data, Block block) {
         super(plugin, component, data, block);
@@ -57,5 +59,20 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> {
         }
 
         targetBlock = world.getBlockAt(clonedLocation.add(0, 1, 0));
+    }
+
+    @Override
+    public long getMaxEnergyConsumption() {
+        return 10L;
+    }
+
+    @Override
+    public long getCurrentEnergyLimit() {
+        return currentEnergyLimit;
+    }
+
+    @Override
+    public void setCurrentEnergyLimit(long currentEnergyLimit) {
+        this.currentEnergyLimit = currentEnergyLimit;
     }
 }

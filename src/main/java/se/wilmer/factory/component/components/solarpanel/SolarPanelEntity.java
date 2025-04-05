@@ -15,6 +15,7 @@ import java.util.Optional;
 
 public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements EnergySupplier {
     private BukkitTask task = null;
+    private long suppliedEnergy = 0L;
 
     public SolarPanelEntity(Factory plugin, SolarPanel component, ComponentData data, Block block) {
         super(plugin, component, data, block);
@@ -22,7 +23,7 @@ public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements Ene
 
     @Override
     public void spawn() {
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new SolarPanelTask(this), 0L, 0L);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new SolarPanelTask(plugin, this), 0L, 0L);
     }
 
     @Override
@@ -38,6 +39,12 @@ public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements Ene
 
     @Override
     public long getSuppliedEnergy() {
-        return 0;
+        return suppliedEnergy;
+    }
+
+    @Override
+    public void setSuppliedEnergy(long energy) {
+        plugin.getComponentLogger().error("SET SUPPLIED ENERGY: {}", energy);
+        this.suppliedEnergy = energy;
     }
 }

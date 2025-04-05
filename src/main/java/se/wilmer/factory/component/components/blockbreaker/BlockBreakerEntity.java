@@ -11,15 +11,17 @@ import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.energy.EnergyConsumer;
 
 import java.util.Optional;
 /**
  * @implNote Using a task that runs every tick is more performance friendly in this cause, because if we would use event, they would call more then one time every tick.
  */
-public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> {
+public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> implements EnergyConsumer {
     private BukkitTask task = null;
     private Block targetBlock = null;
-    private long currentBreakingDuration = 0;
+    private float currentBreakingProgress = 0;
+    private long currentEnergyLimit = 0L;
 
     public BlockBreakerEntity(Factory plugin, BlockBreaker component, ComponentData data, Block block) {
         super(plugin, component, data, block);
@@ -53,40 +55,12 @@ public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> {
         return Optional.ofNullable(targetBlock);
     }
 
-    public long getCurrentBreakingDuration() {
-        return currentBreakingDuration;
+    public float getCurrentBreakingProgress() {
+        return currentBreakingProgress;
     }
 
-    public void setCurrentBreakingDuration(long currentBreakingDuration) {
-        this.currentBreakingDuration = currentBreakingDuration;
-    }
-
-    /**
-     * Updates the target block breaking processes.
-     *
-     * @return The progress that have been done, 0 is "no progress" and 1 is "done" and -1 if the block is currently not processed.
-     */
-    public float tickBreakingProcesses() {
-        if (block.isBlockPowered()) {
-            return -1;
-        }
-        if (targetBlock == null || targetBlock.isEmpty()) {
-            return -1;
-        }
-        Optional<Long> optionalTotalBreakingDuration = component.getMaterialBreakingDuration(targetBlock.getType());
-        if (optionalTotalBreakingDuration.isEmpty()) {
-            return -1;
-        }
-        currentBreakingDuration += 1;
-
-        final long totalBreakingDuration = optionalTotalBreakingDuration.get();
-        if (currentBreakingDuration > totalBreakingDuration) {
-            targetBlock.breakNaturally();
-            currentBreakingDuration = 0;
-            return -1;
-        }
-
-        return (float) currentBreakingDuration / totalBreakingDuration;
+    public void setCurrentBreakingProgress(float currentBreakingProgress) {
+        this.currentBreakingProgress = currentBreakingProgress;
     }
 
     private void updateTargetBlock() {
@@ -99,5 +73,20 @@ public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> {
         }
 
         targetBlock = world.getBlockAt(clonedLocation.add(0, 1, 0));
+    }
+
+    @Override
+    public long getMaxEnergyConsumption() {
+        return 10L;
+    }
+
+    @Override
+    public long getCurrentEnergyLimit() {
+        return currentEnergyLimit;
+    }
+
+    @Override
+    public void setCurrentEnergyLimit(long currentEnergyLimit) {
+        this.currentEnergyLimit = currentEnergyLimit;
     }
 }

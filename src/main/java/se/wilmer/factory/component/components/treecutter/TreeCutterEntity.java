@@ -54,6 +54,11 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
         this.currentEnergyLimit = currentEnergyLimit;
     }
 
+    @Override
+    public long getCurrentEnergyLimit() {
+        return currentEnergyLimit;
+    }
+
     /**
      * Gets the target block that should be broken.
      *

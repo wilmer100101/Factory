@@ -1,9 +1,12 @@
 package se.wilmer.factory.energy;
 
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class EnergyNetworkDistributor {
     private final EnergyNetwork energyNetwork;
@@ -19,10 +22,10 @@ public class EnergyNetworkDistributor {
             totalSuppliedEnergy += supplier.getSuppliedEnergy();
         }
 
-        distributeRemainingEnergy(totalSuppliedEnergy, getRemainingEnergyConsumers(totalSuppliedEnergy));
+        long remainingEnergy = distributeRemainingEnergy(totalSuppliedEnergy, getRemainingEnergyConsumers(totalSuppliedEnergy));
     }
 
-    private void distributeRemainingEnergy(long totalSuppliedEnergy, Map<EnergyConsumer, Long> remainingEnergyConsumers) {
+    private long distributeRemainingEnergy(long totalSuppliedEnergy, Map<EnergyConsumer, Long> remainingEnergyConsumers) {
         while (totalSuppliedEnergy > 0 && !remainingEnergyConsumers.isEmpty()) {
             final long energyPerConsumer = totalSuppliedEnergy / remainingEnergyConsumers.size();
 
@@ -42,6 +45,8 @@ public class EnergyNetworkDistributor {
 
             energyConsumersToRemove.forEach(remainingEnergyConsumers::remove);
         }
+
+        return totalSuppliedEnergy;
     }
 
     private Map<EnergyConsumer, Long> getRemainingEnergyConsumers(long totalSuppliedEnergy) {

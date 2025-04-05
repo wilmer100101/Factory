@@ -18,10 +18,11 @@ public class BlockPlacerTask implements Runnable {
 
     @Override
     public void run() {
-        Block block = blockPlacerEntity.getBlock();
-        if (block.isBlockPowered()) {
+        if (blockPlacerEntity.getMaxEnergyConsumption() > blockPlacerEntity.getCurrentEnergyLimit()) {
             return;
         }
+
+        Block block = blockPlacerEntity.getBlock();
         if (!(block.getState() instanceof Container container)) {
             return;
         }

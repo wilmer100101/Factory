@@ -3,6 +3,7 @@ package se.wilmer.factory.component;
 import org.bukkit.block.Block;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.energy.EnergyComponent;
+import se.wilmer.factory.energy.EnergyNetwork;
 
 import java.util.UUID;
 

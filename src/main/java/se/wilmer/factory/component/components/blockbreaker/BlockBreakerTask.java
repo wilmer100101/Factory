@@ -15,11 +15,6 @@ public class BlockBreakerTask implements Runnable {
 
     @Override
     public void run() {
-        Block block = blockBreakerEntity.getBlock();
-        if (block.isBlockPowered()) {
-            return;
-        }
-
         Optional<Block> optionalTargetBlock = blockBreakerEntity.getTargetBlock();
         if (optionalTargetBlock.isEmpty()) {
             return;
@@ -40,18 +35,26 @@ public class BlockBreakerTask implements Runnable {
         if (optionalTotalBreakingDuration.isEmpty()) {
             return -1;
         }
-        final long totalBreakingDuration = optionalTotalBreakingDuration.get();
+        final float totalBreakingDuration = calculateTotalBreakingDuration(optionalTotalBreakingDuration.get());
+        final float newBreakingProgress = 1 / totalBreakingDuration;
 
-        long currentBreakingDuration = blockBreakerEntity.getCurrentBreakingDuration();
-        currentBreakingDuration += 1;
-        blockBreakerEntity.setCurrentBreakingDuration(currentBreakingDuration);
+        float currentBreakingProgress = blockBreakerEntity.getCurrentBreakingProgress();
+        currentBreakingProgress += newBreakingProgress;
+        blockBreakerEntity.setCurrentBreakingProgress(currentBreakingProgress);
 
-        if (currentBreakingDuration > totalBreakingDuration) {
+        if (currentBreakingProgress > totalBreakingDuration) {
             targetBlock.breakNaturally();
-            blockBreakerEntity.setCurrentBreakingDuration(0);
+            blockBreakerEntity.setCurrentBreakingProgress(0);
             return -1;
         }
 
-        return (float) currentBreakingDuration / totalBreakingDuration;
+        return currentBreakingProgress;
+    }
+
+    public float calculateTotalBreakingDuration(long number) {
+        float energyPercentageLimit = (float) blockBreakerEntity.getCurrentEnergyLimit() / blockBreakerEntity.getMaxEnergyConsumption();
+
+        float percentageIncrease = (1 - energyPercentageLimit) * 100;
+        return number + (number * (percentageIncrease / 100));
     }
 }

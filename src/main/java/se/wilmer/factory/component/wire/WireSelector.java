@@ -36,6 +36,7 @@ public class WireSelector {
             return;
         }
 
+
         CustomBlockData firstCustomBlockData = new CustomBlockData(firstBlock, plugin);
         CustomBlockData secondCustomBlockData = firstSelectedList.get(player.getUniqueId());
         if (secondCustomBlockData == null) {

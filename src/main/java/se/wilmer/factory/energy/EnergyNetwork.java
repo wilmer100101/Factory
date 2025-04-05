@@ -69,6 +69,13 @@ public class EnergyNetwork {
                 .toList();
     }
 
+    public List<EnergyStorage> getStorages() {
+        return components.stream()
+                .filter(EnergyStorage.class::isInstance)
+                .map(EnergyStorage.class::cast)
+                .toList();
+    }
+
     public Map<UUID, List<UUID>> getComponentsConnections() {
         return componentsConnections;
     }

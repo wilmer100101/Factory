@@ -3,6 +3,7 @@ package se.wilmer.factory.component;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.components.blockbreaker.BlockBreaker;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacer;
+import se.wilmer.factory.component.components.solarpanel.SolarPanel;
 import se.wilmer.factory.component.components.treecutter.TreeCutter;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class ComponentRegistry {
         components.add(new BlockBreaker(plugin));
         components.add(new BlockPlacer(plugin));
         components.add(new TreeCutter(plugin));
+        components.add(new SolarPanel(plugin));
     }
 
     public List<Component> getComponents() {

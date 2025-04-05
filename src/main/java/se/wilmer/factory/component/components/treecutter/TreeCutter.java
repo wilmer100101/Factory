@@ -15,15 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TreeCutter extends Component {
-    private final Map<Material, Long> materialBreakDurationTicks = new HashMap<>();
 
     public TreeCutter(Factory plugin) {
         super(plugin);
-
-        materialBreakDurationTicks.put(Material.DIRT, 10L);
-        materialBreakDurationTicks.put(Material.STONE, 1L);
-        materialBreakDurationTicks.put(Material.ORANGE_WOOL, 0L);
-        materialBreakDurationTicks.put(Material.GREEN_WOOL, 100L);
     }
 
     @Override
@@ -35,15 +29,4 @@ public class TreeCutter extends Component {
     public ComponentEntity<TreeCutter> createEntity(Block block) {
         return new TreeCutterEntity(plugin, this, new TreeCutterData(plugin, block), block);
     }
-
-    /**
-     * Retrieves the breaking duration in ticks for a given material.
-     *
-     * @param material The material to get the duration for.
-     * @return Duration in ticks, or empty if the material was not found.
-     */
-    public Optional<Long> getMaterialBreakingDuration(Material material) {
-        return Optional.ofNullable(materialBreakDurationTicks.get(material));
-    }
-
 }
