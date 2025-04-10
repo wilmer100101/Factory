@@ -138,6 +138,7 @@ public class EnergyNetworkDisconnector {
         usedComponents.forEach(usedComponent -> energyNetworkManager.getEnergyComponent(usedComponent).ifPresent(energyNetwork::addComponent));
 
         energyNetworkManager.getNetworks().add(energyNetwork);
+        energyNetwork.requestEnergyNetworkUpdate();
 
         return energyNetwork;
     }

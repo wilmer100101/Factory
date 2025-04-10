@@ -22,47 +22,40 @@ public class EnergyNetworkDistributor {
             totalSuppliedEnergy += supplier.getSuppliedEnergy();
         }
 
-        long remainingEnergy = distributeRemainingEnergy(totalSuppliedEnergy, getRemainingEnergyConsumers(totalSuppliedEnergy));
+        long remainingEnergy = distributeEnergy(totalSuppliedEnergy);
     }
 
-    private long distributeRemainingEnergy(long totalSuppliedEnergy, Map<EnergyConsumer, Long> remainingEnergyConsumers) {
-        while (totalSuppliedEnergy > 0 && !remainingEnergyConsumers.isEmpty()) {
-            final long energyPerConsumer = totalSuppliedEnergy / remainingEnergyConsumers.size();
+    private long distributeEnergy(long totalSuppliedEnergy) {
+        Map<EnergyConsumer, Long> remainingConsumers = new HashMap<>();
 
-            List<EnergyConsumer> energyConsumersToRemove = new ArrayList<>();
-            for (Map.Entry<EnergyConsumer, Long> entry : remainingEnergyConsumers.entrySet()) {
+        for (EnergyConsumer consumer : energyNetwork.getConsumers()) {
+            remainingConsumers.put(consumer, 0L);
+            consumer.setCurrentEnergyLimit(0);
+        }
+
+        while (totalSuppliedEnergy >= 1 && !remainingConsumers.isEmpty()) {
+
+            final long energyPerConsumer = totalSuppliedEnergy / remainingConsumers.size();
+
+            List<EnergyConsumer> consumersToRemove = new ArrayList<>();
+            for (Map.Entry<EnergyConsumer, Long> entry : remainingConsumers.entrySet()) {
                 EnergyConsumer consumer = entry.getKey();
                 long currentEnergy = entry.getValue();
                 long maxEnergy = consumer.getMaxEnergyConsumption();
 
                 long energy = Math.min(energyPerConsumer + currentEnergy, maxEnergy);
-                if (energy < maxEnergy) {
-                    energyConsumersToRemove.add(consumer);
+                if (energy <= maxEnergy) {
+                    consumersToRemove.add(consumer);
                 }
 
+                consumer.setCurrentEnergyLimit(energy);
                 totalSuppliedEnergy -= energy;
             }
 
-            energyConsumersToRemove.forEach(remainingEnergyConsumers::remove);
+            consumersToRemove.forEach(remainingConsumers::remove);
         }
 
         return totalSuppliedEnergy;
     }
 
-    private Map<EnergyConsumer, Long> getRemainingEnergyConsumers(long totalSuppliedEnergy) {
-        Map<EnergyConsumer, Long> remainingEnergyConsumers = new HashMap<>();
-        List<EnergyConsumer> clonedConsumers = new ArrayList<>(energyNetwork.getConsumers());
-        final long energyPerConsumer = totalSuppliedEnergy / clonedConsumers.size();
-        for (EnergyConsumer clonedConsumer : clonedConsumers) {
-            final long maxEnergy = clonedConsumer.getMaxEnergyConsumption();
-
-            if (maxEnergy <= energyPerConsumer) {
-                clonedConsumer.setCurrentEnergyLimit(maxEnergy);
-                continue;
-            }
-
-            remainingEnergyConsumers.put(clonedConsumer, energyPerConsumer);
-        }
-        return remainingEnergyConsumers;
-    }
 }

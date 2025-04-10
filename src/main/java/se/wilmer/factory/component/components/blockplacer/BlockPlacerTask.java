@@ -1,6 +1,7 @@
 package se.wilmer.factory.component.components.blockplacer;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class BlockPlacerTask implements Runnable {
     private final BlockPlacerEntity blockPlacerEntity;

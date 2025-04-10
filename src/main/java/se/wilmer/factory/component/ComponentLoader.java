@@ -2,14 +2,12 @@ package se.wilmer.factory.component;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.morepersistentdatatypes.DataType;
-import com.jeff_media.morepersistentdatatypes.datatypes.UuidDataType;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import se.wilmer.factory.Factory;
-import se.wilmer.factory.component.wire.WireDataType;
 import se.wilmer.factory.energy.EnergyNetworkManager;
 
 import java.util.UUID;
@@ -48,9 +46,10 @@ public class ComponentLoader {
                     .findAny()
                     .ifPresent(component ->  {
                         ComponentEntity<?> componentEntity = component.createEntity(block);
-                        componentEntity.load();
+                        plugin.getEnergyNetworkManager().loadComponent(componentEntity).thenAccept(unused -> {
+                            componentEntity.load();
+                        });
 
-                        plugin.getEnergyNetworkManager().loadComponent(componentEntity);
                     });
         }
     }

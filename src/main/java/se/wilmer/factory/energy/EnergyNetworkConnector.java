@@ -5,7 +5,6 @@ import se.wilmer.factory.Factory;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class EnergyNetworkConnector {
     private final Factory plugin;
@@ -103,6 +102,7 @@ public class EnergyNetworkConnector {
         energyNetwork.getComponentsConnections(existingComponentUUID).ifPresent(c -> c.add(newComponentUUID));
         energyNetwork.getComponentsConnections(newComponentUUID).ifPresent(c -> c.add(existingComponentUUID));
 
+        energyNetwork.requestEnergyNetworkUpdate();
         energyNetworkManager.getSerializer().deserializeNetwork(energyNetwork);
     }
 
@@ -123,6 +123,7 @@ public class EnergyNetworkConnector {
         firstNetwork.getComponentsConnections(secondComponentUUID).ifPresent(connections -> connections.add(firstComponentUUID));
 
         energyNetworkManager.getNetworks().remove(secondNetwork);
+        firstNetwork.requestEnergyNetworkUpdate();
 
         EnergyNetworkSerializer serializer = energyNetworkManager.getSerializer();
         serializer.deserializeNetwork(firstNetwork);
@@ -149,6 +150,8 @@ public class EnergyNetworkConnector {
         EnergyNetwork energyNetwork = new EnergyNetwork(plugin, networkUUID, componentsConnections);
         energyNetwork.addComponent(firstComponent);
         energyNetwork.addComponent(secondComponent);
+
+        energyNetwork.requestEnergyNetworkUpdate();
 
         energyNetworkManager.getNetworks().add(energyNetwork);
         energyNetworkManager.getSerializer().deserializeNetwork(energyNetwork);

@@ -44,7 +44,6 @@ public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements Ene
 
     @Override
     public void setSuppliedEnergy(long energy) {
-        plugin.getComponentLogger().error("SET SUPPLIED ENERGY: {}", energy);
         this.suppliedEnergy = energy;
     }
 }
