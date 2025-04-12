@@ -1,13 +1,12 @@
 package se.wilmer.factory.component;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.Server;
+import org.bukkit.World;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.wire.WireManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class ComponentManager {
     private final Factory plugin;
@@ -24,7 +23,7 @@ public class ComponentManager {
         this.plugin = plugin;
 
         uuidKey = new NamespacedKey(plugin, "component_uuid");
-        typeKey = new NamespacedKey(plugin, "type_uuid");
+        typeKey = new NamespacedKey(plugin, "component_type");
         connectionsKey = new NamespacedKey(plugin, "component_connections");
         loader = new ComponentLoader(plugin, this);
         itemConverter = new ComponentItemConverter(plugin, this);
@@ -39,15 +38,17 @@ public class ComponentManager {
     }
 
     public void load() {
-        plugin.getServer().getPluginManager().registerEvents(new ComponentListener(this), plugin);
+        Server server = plugin.getServer();
+        server.getPluginManager().registerEvents(new ComponentListener(this), plugin);
 
         wireManager.load();
-
         registry.register();
+
+        server.getWorlds().forEach(world -> Arrays.stream(world.getLoadedChunks()).forEach(loader::loadComponentsInChunk));
     }
 
     public void unload() {
-
+        plugin.getServer().getWorlds().forEach(world -> Arrays.stream(world.getLoadedChunks()).forEach(loader::unloadComponentsInChunk));
     }
 
     public ComponentLoader getLoader() {
