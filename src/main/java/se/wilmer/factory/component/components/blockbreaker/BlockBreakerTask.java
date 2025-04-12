@@ -42,7 +42,7 @@ public class BlockBreakerTask implements Runnable {
         currentBreakingProgress += newBreakingProgress;
         blockBreakerEntity.setCurrentBreakingProgress(currentBreakingProgress);
 
-        if (currentBreakingProgress > totalBreakingDuration) {
+        if (currentBreakingProgress >= 1) {
             targetBlock.breakNaturally();
             blockBreakerEntity.setCurrentBreakingProgress(0);
             return -1;
