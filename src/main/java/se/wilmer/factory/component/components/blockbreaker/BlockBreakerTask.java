@@ -35,9 +35,13 @@ public class BlockBreakerTask implements Runnable {
         if (optionalTotalBreakingDuration.isEmpty()) {
             return -1;
         }
-        final float totalBreakingDuration = calculateTotalBreakingDuration(optionalTotalBreakingDuration.get());
-        final float newBreakingProgress = 1 / totalBreakingDuration;
 
+        final float totalBreakingDuration = calculateTotalBreakingDuration(optionalTotalBreakingDuration.get());
+        if (totalBreakingDuration == -1) {
+            return -1;
+        }
+
+        final float newBreakingProgress = 1 / totalBreakingDuration;
         float currentBreakingProgress = blockBreakerEntity.getCurrentBreakingProgress();
         currentBreakingProgress += newBreakingProgress;
         blockBreakerEntity.setCurrentBreakingProgress(currentBreakingProgress);
@@ -52,7 +56,12 @@ public class BlockBreakerTask implements Runnable {
     }
 
     public float calculateTotalBreakingDuration(long number) {
-        float energyPercentageLimit = (float) blockBreakerEntity.getCurrentEnergyLimit() / blockBreakerEntity.getMaxEnergyConsumption();
+        long currentEnergyLimit = blockBreakerEntity.getCurrentEnergyLimit();
+        if (currentEnergyLimit == 0L) {
+            return -1;
+        }
+
+        float energyPercentageLimit = (float) currentEnergyLimit / blockBreakerEntity.getMaxEnergyConsumption();
 
         float percentageIncrease = (1 - energyPercentageLimit) * 100;
         return number + (number * (percentageIncrease / 100));

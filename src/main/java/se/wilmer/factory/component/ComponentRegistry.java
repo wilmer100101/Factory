@@ -3,6 +3,7 @@ package se.wilmer.factory.component;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.components.blockbreaker.BlockBreaker;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacer;
+import se.wilmer.factory.component.components.milker.Milker;
 import se.wilmer.factory.component.components.solarpanel.SolarPanel;
 import se.wilmer.factory.component.components.treecutter.TreeCutter;
 
@@ -23,6 +24,7 @@ public class ComponentRegistry {
         components.add(new BlockPlacer(plugin));
         components.add(new TreeCutter(plugin));
         components.add(new SolarPanel(plugin));
+        components.add(new Milker(plugin));
     }
 
     public List<Component> getComponents() {
