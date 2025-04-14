@@ -1,5 +1,11 @@
 package se.wilmer.factory.component.components.milker;
 
+import io.papermc.paper.entity.Shearable;
+import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
+import net.minecraft.world.inventory.DispenserMenu;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -9,21 +15,19 @@ import org.bukkit.block.Container;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import se.wilmer.factory.Factory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class MilkerTask implements Runnable {
-    private static final Class<?>[] MILKING_ENTITIES = new Class[]{
-            Cow.class,
-            Goat.class,
-            MushroomCow.class
-    };
+    private static final List<EntityType> MILKING_ENTITIES = List.of(
+            EntityType.COW,
+            EntityType.GOAT,
+            EntityType.MOOSHROOM
+    );
 
     private final Factory plugin;
     private final MilkerEntity milkerEntity;
@@ -41,7 +45,10 @@ public class MilkerTask implements Runnable {
         Block block = milkerEntity.getBlock();
         World world = block.getWorld();
         Location location = block.getLocation();
-        if (world.getEntitiesByClasses(MILKING_ENTITIES).isEmpty() || !(block.getState() instanceof Container container)) {
+
+
+        Optional<Block> optionalTargetBlock = milkerEntity.getTargetBlock();
+        if (optionalTargetBlock.isEmpty() || !(block.getState() instanceof Container container) || world.getNearbyEntities(optionalTargetBlock.get().getBoundingBox()).stream().noneMatch(livingEntity -> MILKING_ENTITIES.contains(livingEntity.getType()))) {
             return;
         }
 
