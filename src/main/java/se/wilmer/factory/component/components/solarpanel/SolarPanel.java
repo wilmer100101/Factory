@@ -4,20 +4,29 @@ import org.bukkit.block.Block;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.Component;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.component.ComponentInfoSerializer;
 
 public class SolarPanel extends Component {
+    private final ComponentInfoSerializer componentInfoSerializer;
+    private final long suppliedEnergy;
 
-    public SolarPanel(Factory plugin) {
-        super(plugin);
-    }
+    public SolarPanel(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long suppliedEnergy) {
+        super(plugin, id);
 
-    @Override
-    public String getId() {
-        return "solarpanel";
+        this.componentInfoSerializer = componentInfoSerializer;
+        this.suppliedEnergy = suppliedEnergy;
     }
 
     @Override
     public ComponentEntity<SolarPanel> createEntity(Block block) {
         return new SolarPanelEntity(plugin, this, new SolarPanelData(plugin, block), block);
+    }
+
+    public ComponentInfoSerializer getComponentInfoSerializer() {
+        return componentInfoSerializer;
+    }
+
+    public long getSuppliedEnergy() {
+        return suppliedEnergy;
     }
 }

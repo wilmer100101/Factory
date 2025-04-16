@@ -98,12 +98,14 @@ public class WireSelector {
                 return;
             }
 
-            if (isCreateFirstEntity) {
-                finalFirstComponentEntity.load();
-            }
-            if (isCreateSecondEntity) {
-                finalSecondComponentEntity.load();
-            }
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                if (isCreateFirstEntity) {
+                    finalFirstComponentEntity.load();
+                }
+                if (isCreateSecondEntity) {
+                    finalSecondComponentEntity.load();
+                }
+            });
         });
     }
 

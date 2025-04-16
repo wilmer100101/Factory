@@ -3,6 +3,7 @@ package se.wilmer.factory.component.components.treecutter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import se.wilmer.factory.Factory;
 
 import java.util.*;
 
@@ -41,18 +42,19 @@ public class TreeCutterTask implements Runnable {
             BlockFace.EAST
     );
 
+    private final Factory plugin;
     private final TreeCutterEntity treeCutterEntity;
     private final List<Block> blocks = new ArrayList<>();
+    private long lastTimeRun = 0L;
 
-    public TreeCutterTask(TreeCutterEntity treeCutterEntity) {
+    public TreeCutterTask(Factory plugin, TreeCutterEntity treeCutterEntity) {
+        this.plugin = plugin;
         this.treeCutterEntity = treeCutterEntity;
     }
 
     @Override
     public void run() {
-        if (treeCutterEntity.getMaxEnergyConsumption() > treeCutterEntity.getCurrentEnergyLimit()) {
-            return;
-        }
+        lastTimeRun = plugin.getServer().getCurrentTick();
 
         Optional<Block> optionalTargetBlock = treeCutterEntity.getTargetBlock();
         if (optionalTargetBlock.isEmpty()) {
@@ -96,5 +98,9 @@ public class TreeCutterTask implements Runnable {
 
             addTreeBlocks(currentBlock, attempts);
         }
+    }
+
+    public long getLastTimeRun() {
+        return lastTimeRun;
     }
 }

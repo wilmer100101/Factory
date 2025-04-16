@@ -1,0 +1,5 @@
+solarpanel:
+  supplied-energy: 10
+  info:
+    title: "SolarPanel"
+    display-energy: true

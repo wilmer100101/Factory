@@ -25,6 +25,7 @@ dependencies {
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0-SNAPSHOT")
+    implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
     implementation("com.jeff-media:custom-block-data:2.2.4")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }

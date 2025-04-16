@@ -1,0 +1,6 @@
+milker:
+  max-energy-consumption: 10
+  milking-tick-interval: 10
+  info:
+    title: "Milker"
+    display-energy: true

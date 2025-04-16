@@ -14,6 +14,7 @@ public class ComponentManager {
     private final NamespacedKey uuidKey;
     private final NamespacedKey typeKey;
     private final NamespacedKey connectionsKey;
+    private final NamespacedKey infoKey;
     private final ComponentRegistry registry;
     private final ComponentLoader loader;
     private final ComponentItemConverter itemConverter;
@@ -25,6 +26,7 @@ public class ComponentManager {
         uuidKey = new NamespacedKey(plugin, "component_uuid");
         typeKey = new NamespacedKey(plugin, "component_type");
         connectionsKey = new NamespacedKey(plugin, "component_connections");
+        infoKey = new NamespacedKey(plugin, "component_info");
         loader = new ComponentLoader(plugin, this);
         itemConverter = new ComponentItemConverter(plugin, this);
         registry = new ComponentRegistry(plugin);
@@ -69,6 +71,10 @@ public class ComponentManager {
 
     public NamespacedKey getUUIDKey() {
         return uuidKey;
+    }
+
+    public NamespacedKey getInfoKey() {
+        return infoKey;
     }
 
     public ComponentItemConverter getItemConverter() {

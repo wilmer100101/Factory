@@ -31,7 +31,7 @@ public class SolarPanelTask implements Runnable {
         if (isDayTime && !isDay) {
             isDay = true;
 
-            solarPanelEntity.setSuppliedEnergy(10L);
+            solarPanelEntity.setSuppliedEnergy(solarPanelEntity.getComponent().getSuppliedEnergy());
             energyNetworkManager.getComponentFromLoadedNetworks(solarPanelEntity).ifPresent(EnergyNetwork::requestEnergyNetworkUpdate);
         } else if (!isDayTime && isDay) {
             isDay = false;

@@ -10,25 +10,34 @@ import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.component.ComponentInfo;
 import se.wilmer.factory.energy.EnergyConsumer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsumer {
+    private final MilkerData data;
     private final MilkerTask milkerTask;
     private Block targetBlock = null;
     private BukkitTask task = null;
+    private ComponentInfo componentInfo;
     private long currentMilkingDuration = 0L;
     private long currentEnergyLimit = 0L;
 
-    public MilkerEntity(Factory plugin, Milker component, ComponentData data, Block block) {
-        super(plugin, component, data, block);
+    public MilkerEntity(Factory plugin, Milker component, MilkerData data, Block block) {
+        super(plugin, component, block);
+
+        this.data = data;
 
         milkerTask = new MilkerTask(plugin, this);
     }
 
     @Override
     public void spawn() {
+        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
+        componentInfo.spawn(block.getLocation());
+
         updateTargetBlock();
         updateMilkScheduler();
     }
@@ -38,22 +47,36 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
         if (task != null) {
             task.cancel();
         }
+        if (componentInfo != null) {
+            componentInfo.despawn(block.getWorld());
+        }
     }
 
     @Override
     public void onBlockChange() {
+        if (componentInfo != null) {
+            componentInfo.updateLocation();
+        }
         updateTargetBlock();
     }
 
     @Override
+    public ComponentData getData() {
+        return data;
+    }
+
+    @Override
     public long getMaxEnergyConsumption() {
-        return 10L;
+        return component.getMaxEnergyConsumption();
     }
 
     @Override
     public void setCurrentEnergyLimit(long currentEnergyLimit) {
         this.currentEnergyLimit = currentEnergyLimit;
 
+        if (componentInfo != null) {
+            componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
+        }
         updateMilkScheduler();
     }
 

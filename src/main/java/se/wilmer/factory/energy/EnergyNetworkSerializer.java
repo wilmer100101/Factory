@@ -7,6 +7,7 @@ import io.leangen.geantyref.TypeToken;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
 import org.spongepowered.configurate.util.Types;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import se.wilmer.factory.Factory;
 
 import java.io.IOException;
@@ -56,7 +57,6 @@ public class EnergyNetworkSerializer {
     }
 
     public CompletableFuture<Void> deleteNetworkFile(UUID networkUUID) {
-        plugin.getComponentLogger().warn("Deleting networkUUID: " + networkUUID);
         return CompletableFuture.supplyAsync(() -> {
             ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
             lock.lock();

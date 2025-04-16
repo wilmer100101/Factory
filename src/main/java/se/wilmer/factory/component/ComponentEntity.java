@@ -1,7 +1,10 @@
 package se.wilmer.factory.component;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import se.wilmer.factory.Factory;
+import se.wilmer.factory.component.components.treecutter.TreeCutterData;
 import se.wilmer.factory.energy.EnergyComponent;
 import se.wilmer.factory.energy.EnergyNetwork;
 
@@ -11,21 +14,19 @@ public abstract class ComponentEntity<T extends Component> implements EnergyComp
     protected final Factory plugin;
     protected final T component;
     protected final Block block;
-    protected final ComponentData data;
 
-    public ComponentEntity(Factory plugin, T component, ComponentData data, Block block) {
+    public ComponentEntity(Factory plugin, T component, Block block) {
         this.plugin = plugin;
         this.component = component;
         this.block = block;
-        this.data = data;
     }
 
-    public void load() {
+    public final void load() {
         plugin.getComponentManager().getComponentEntities().add(this);
         spawn();
     }
 
-    public void unload() {
+    public final void unload() {
         plugin.getComponentManager().getComponentEntities().remove(this);
         despawn();
     }
@@ -36,19 +37,22 @@ public abstract class ComponentEntity<T extends Component> implements EnergyComp
 
     public abstract void onBlockChange();
 
-    public Block getBlock() {
+    //TODO: (TEMP) Make this return a configurable value
+    public Location getOffsetLocation() {
+        return block.getLocation().clone().add(0.5, block.getBoundingBox().getHeight(), 0.5);
+    }
+
+    public abstract ComponentData getData();
+
+    public final Block getBlock() {
         return block;
     }
 
-    public UUID getUUID() {
-        return data.getUUID();
+    public final UUID getUUID() {
+        return getData().getUUID();
     }
 
-    public ComponentData getData() {
-        return data;
-    }
-
-    public T getComponent() {
+    public final T getComponent() {
         return component;
     }
 }

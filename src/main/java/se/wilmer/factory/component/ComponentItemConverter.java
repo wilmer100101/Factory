@@ -4,14 +4,12 @@ import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.customblockdata.events.CustomBlockDataRemoveEvent;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import io.papermc.paper.persistence.PersistentDataContainerView;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import se.wilmer.factory.Factory;
 
@@ -42,6 +40,8 @@ public class ComponentItemConverter {
         Event originalEvent = event.getBukkitEvent();
         Class<? extends @NotNull Event> originalEventClass = event.getBukkitEvent().getClass();
 
+        plugin.getComponentLogger().info("Event: " + originalEvent.getEventName());
+
         if (originalEventClass.isAssignableFrom(BlockBreakEvent.class)) {
             BlockBreakEvent blockBreakEvent = (BlockBreakEvent) originalEvent;
             blockBreakEvent.setDropItems(false);
@@ -54,6 +54,26 @@ public class ComponentItemConverter {
             transferAndDrop(block, type, uuid);
 
             block.setBlockData(blockPlaceEvent.getBlockPlaced().getBlockData());
+        } else if (originalEventClass.isAssignableFrom(BlockExplodeEvent.class)) {
+            BlockExplodeEvent blockExplodeEvent = (BlockExplodeEvent) originalEvent;
+
+            transferAndDrop(block, type, uuid);
+
+            blockExplodeEvent.blockList().remove(block);
+            block.setType(Material.AIR);
+
+            plugin.getComponentLogger().info("BlockExplodeEvent");
+        } else if (originalEventClass.isAssignableFrom(EntityExplodeEvent.class)) {
+            EntityExplodeEvent entityExplodeEvent = (EntityExplodeEvent) originalEvent;
+
+            entityExplodeEvent.blockList().remove(block);
+            plugin.getComponentLogger().info("EntityExplodeEvents: " + block);
+
+            transferAndDrop(block, type, uuid);
+
+            block.setType(Material.AIR);
+
+            plugin.getComponentLogger().info("EntityExplodeEvent: " + block);
         }
     }
 
@@ -64,7 +84,7 @@ public class ComponentItemConverter {
             pdc.set(componentManager.getUUIDKey(), DataType.UUID, uuid);
         });
 
-        block.getWorld().dropItem(block.getLocation(), itemStack);
+        block.getWorld().dropItemNaturally(block.getLocation(), itemStack);
     }
 
     public void transferDataFromItemStack(BlockPlaceEvent event) {

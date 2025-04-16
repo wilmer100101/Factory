@@ -9,24 +9,33 @@ import org.bukkit.scheduler.BukkitTask;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.component.ComponentInfo;
 import se.wilmer.factory.energy.EnergyConsumer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @implNote Using a task that runs every tick is more performance friendly in this cause, because if we would use event, they would call more then one time every tick.
  */
 public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements EnergyConsumer {
+    private final BlockPlacerData data;
     private BukkitTask task = null;
     private Block targetBlock = null;
+    private ComponentInfo componentInfo;
     private long currentEnergyLimit = 0L;
 
-    public BlockPlacerEntity(Factory plugin, BlockPlacer component, ComponentData data, Block block) {
-        super(plugin, component, data, block);
+    public BlockPlacerEntity(Factory plugin, BlockPlacer component, BlockPlacerData data, Block block) {
+        super(plugin, component, block);
+
+        this.data = data;
     }
 
     @Override
     public void spawn() {
+        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
+        componentInfo.spawn(block.getLocation());
+
         updateTargetBlock();
 
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, new BlockPlacerTask(this), 0L, 0L);
@@ -37,11 +46,41 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
         if (task != null) {
             task.cancel();
         }
+        if (componentInfo != null) {
+            componentInfo.despawn(block.getWorld());
+        }
     }
 
     @Override
     public void onBlockChange() {
+        if (componentInfo != null) {
+            componentInfo.updateLocation();
+        }
         updateTargetBlock();
+    }
+
+    @Override
+    public ComponentData getData() {
+        return data;
+    }
+
+    @Override
+    public long getMaxEnergyConsumption() {
+        return component.getMaxEnergyConsumption();
+    }
+
+    @Override
+    public long getCurrentEnergyLimit() {
+        return currentEnergyLimit;
+    }
+
+    @Override
+    public void setCurrentEnergyLimit(long currentEnergyLimit) {
+        this.currentEnergyLimit = currentEnergyLimit;
+
+        if (componentInfo != null) {
+            componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
+        }
     }
 
     public Optional<Block> getTargetBlock() {
@@ -58,20 +97,5 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
         }
 
         targetBlock = world.getBlockAt(clonedLocation.add(0, 1, 0));
-    }
-
-    @Override
-    public long getMaxEnergyConsumption() {
-        return 10L;
-    }
-
-    @Override
-    public long getCurrentEnergyLimit() {
-        return currentEnergyLimit;
-    }
-
-    @Override
-    public void setCurrentEnergyLimit(long currentEnergyLimit) {
-        this.currentEnergyLimit = currentEnergyLimit;
     }
 }

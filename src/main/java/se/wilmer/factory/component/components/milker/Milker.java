@@ -4,17 +4,19 @@ import org.bukkit.block.Block;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.Component;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.component.ComponentInfoSerializer;
 
 public class Milker extends Component {
-    private static final long MILKING_DURATION = 10L;
+    private final ComponentInfoSerializer componentInfoSerializer;
+    private final long maxEnergyConsumption;
+    private final long milkingDuration;
 
-    public Milker(Factory plugin) {
-        super(plugin);
-    }
+    public Milker(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long maxEnergyConsumption, long milkingDuration) {
+        super(plugin, id);
 
-    @Override
-    public String getId() {
-        return "milker";
+        this.componentInfoSerializer = componentInfoSerializer;
+        this.maxEnergyConsumption = maxEnergyConsumption;
+        this.milkingDuration = milkingDuration;
     }
 
     @Override
@@ -23,6 +25,14 @@ public class Milker extends Component {
     }
 
     public long getMilkingDuration() {
-        return MILKING_DURATION;
+        return milkingDuration;
+    }
+
+    public long getMaxEnergyConsumption() {
+        return maxEnergyConsumption;
+    }
+
+    public ComponentInfoSerializer getComponentInfoSerializer() {
+        return componentInfoSerializer;
     }
 }

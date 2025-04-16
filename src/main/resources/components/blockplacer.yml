@@ -1,0 +1,5 @@
+blockplacer:
+  max-energy-consumption: 10
+  info:
+    title: "BlockPlacer"
+    display-energy: true

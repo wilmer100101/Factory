@@ -26,12 +26,9 @@ public class WireConnector {
             }
 
             plugin.getServer().getScheduler().runTask(plugin, () -> {
-                Block firstBlock = firstComponent.getBlock();
-                Block secondBlock = secondComponent.getBlock();
-
-                World world = firstBlock.getWorld();
-                Frog firstEntity = spawnWireEntity(world, firstBlock);
-                Frog secondEntity = spawnWireEntity(world, secondBlock);
+                World world = firstComponent.getBlock().getWorld();
+                Frog firstEntity = spawnWireEntity(world, firstComponent);
+                Frog secondEntity = spawnWireEntity(world, secondComponent);
 
                 firstEntity.setLeashHolder(secondEntity);
 
@@ -43,9 +40,8 @@ public class WireConnector {
         });
     }
 
-    private Frog spawnWireEntity(World world, Block block) {
-
-        return world.spawn(block.getLocation().add(0.5, block.getBoundingBox().getHeight() - 0.5, 0.5), Frog.class, frog -> {
+    private Frog spawnWireEntity(World world, ComponentEntity<?> component) {
+        return world.spawn(component.getOffsetLocation().clone().subtract(0, 0.5, 0), Frog.class, frog -> {
             frog.setSilent(true);
             frog.setAI(false);
             frog.setGravity(false);

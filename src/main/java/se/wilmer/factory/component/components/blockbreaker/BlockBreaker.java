@@ -1,36 +1,43 @@
 package se.wilmer.factory.component.components.blockbreaker;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.Component;
 import se.wilmer.factory.component.ComponentEntity;
+import se.wilmer.factory.component.ComponentInfoSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class BlockBreaker extends Component {
-    private final Map<Material, Long> materialBreakDurationTicks = new HashMap<>();
+    private final ComponentInfoSerializer componentInfoSerializer;
+    private final long maxEnergyConsumption;
+    private final Map<Material, Long> materialBreakDurationTicks;
 
-    public BlockBreaker(Factory plugin) {
-        super(plugin);
+    public BlockBreaker(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long maxEnergyConsumption, Map<Material, Long> materialBreakDurationTicks) {
+        super(plugin, id);
 
-        materialBreakDurationTicks.put(Material.DIRT, 10L);
-        materialBreakDurationTicks.put(Material.STONE, 1L);
-        materialBreakDurationTicks.put(Material.ORANGE_WOOL, 0L);
-        materialBreakDurationTicks.put(Material.GREEN_WOOL, 100L);
-    }
-
-    @Override
-    public String getId() {
-        return "blockbreaker";
+        this.componentInfoSerializer = componentInfoSerializer;
+        this.maxEnergyConsumption = maxEnergyConsumption;
+        this.materialBreakDurationTicks = materialBreakDurationTicks;
     }
 
     @Override
     public ComponentEntity<BlockBreaker> createEntity(Block block) {
         return new BlockBreakerEntity(plugin, this, new BlockBreakerData(plugin, block), block);
+    }
+
+    public ComponentInfoSerializer getComponentInfoSerializer() {
+        return componentInfoSerializer;
+    }
+
+    public long getMaxEnergyConsumption() {
+        return maxEnergyConsumption;
     }
 
     /**

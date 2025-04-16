@@ -1,0 +1,6 @@
+treecutter:
+  max-energy-consumption: 10
+  cutting-tick-interval: 10
+  info:
+    title: "TreeCutter"
+    display-energy: true
