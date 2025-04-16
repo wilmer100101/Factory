@@ -100,7 +100,7 @@ public class TreeCutterTask implements Runnable {
             float progress = (float) (currentTick - initialTime) / duration;
 
             Location location = targetBlock.getLocation();
-            treeCutterEntity.getBlock().getWorld().getPlayersSeeingChunk(targetBlock.getChunk()).forEach(player -> player.sendBlockDamage(location, progress));
+            treeCutterEntity.getBlock().getWorld().getPlayersSeeingChunk(targetBlock.getChunk()).forEach(player -> player.sendBlockDamage(location, progress, -location.hashCode()));
         }, 0L, 0L);
     }
 

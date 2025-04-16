@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class BlockBreakerTask implements Runnable {
@@ -27,7 +28,7 @@ public class BlockBreakerTask implements Runnable {
         }
 
         Location location = targetBlock.getLocation();
-        blockBreakerEntity.getBlock().getWorld().getPlayersSeeingChunk(targetBlock.getChunk()).forEach(player -> player.sendBlockDamage(location, progress));
+        blockBreakerEntity.getBlock().getWorld().getPlayersSeeingChunk(targetBlock.getChunk()).forEach(player -> player.sendBlockDamage(location, progress, -location.hashCode()));
     }
 
     public float getBlockProgress(Block targetBlock) {
