@@ -1,5 +1,6 @@
 package se.wilmer.factory.component.components.treecutter;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -77,6 +78,30 @@ public class TreeCutterTask implements Runnable {
 
         Block currentBlock = blocks.removeFirst();
         currentBlock.breakNaturally();
+
+        if (!blocks.isEmpty()) {
+            startBreakingTask(blocks.getFirst());
+        }
+    }
+
+    private void startBreakingTask(Block targetBlock) {
+        final long duration = treeCutterEntity.getCurrentCuttingDuration();
+        final long initialTime = plugin.getServer().getCurrentTick();
+
+        final long endTime = initialTime + duration;
+
+        plugin.getServer().getScheduler().runTaskTimer(plugin, (task) -> {
+            if (plugin.getServer().getCurrentTick() >= endTime) {
+                task.cancel();
+                return;
+            }
+
+            long currentTick = plugin.getServer().getCurrentTick();
+            float progress = (float) (currentTick - initialTime) / duration;
+
+            Location location = targetBlock.getLocation();
+            treeCutterEntity.getBlock().getWorld().getPlayersSeeingChunk(targetBlock.getChunk()).forEach(player -> player.sendBlockDamage(location, progress));
+        }, 0L, 0L);
     }
 
     private void addTreeBlocks(Block block, int attempts) {
@@ -93,7 +118,6 @@ public class TreeCutterTask implements Runnable {
             if (blocks.contains(currentBlock)) {
                 continue;
             }
-
             blocks.add(currentBlock);
 
             addTreeBlocks(currentBlock, attempts);

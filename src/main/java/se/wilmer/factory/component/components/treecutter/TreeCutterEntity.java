@@ -133,4 +133,8 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
         float percentageIncrease = (1 - energyPercentageLimit) * 100;
         return (long) (number + (number * (percentageIncrease / 100)));
     }
+
+    public long getCurrentCuttingDuration() {
+        return currentCuttingDuration;
+    }
 }
