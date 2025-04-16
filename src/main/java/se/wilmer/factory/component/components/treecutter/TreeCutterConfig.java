@@ -26,7 +26,6 @@ public class TreeCutterConfig extends ComponentConfig<TreeCutter> {
         for (ConfigurationNode childNode : node.childrenMap().values()) {
             getTreeCutter(childNode).ifPresent(treeCutters::add);
         }
-        plugin.getComponentLogger().warn("Size: {}", node.childrenMap().values());
         return treeCutters;
     }
 
@@ -43,9 +42,7 @@ public class TreeCutterConfig extends ComponentConfig<TreeCutter> {
             plugin.getComponentLogger().warn("Did not found all configuration values for, {}, values: id: {}, maxEnergyConsumption: {}, cuttingTickInterval: {}", this.id, id, maxEnergyConsumption, cuttingTickInterval);
             return Optional.empty();
         }
-
-        plugin.getComponentLogger().warn("TreeCutter: , id: {}, maxEnergyConsumption: {}, cuttingTickInterval: {}", id, maxEnergyConsumption, cuttingTickInterval);
-
+        
         return Optional.of(new TreeCutter(plugin, id, infoSerializer, maxEnergyConsumption, cuttingTickInterval));
     }
 }
