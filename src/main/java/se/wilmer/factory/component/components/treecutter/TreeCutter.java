@@ -38,7 +38,7 @@ public class TreeCutter extends Component {
         return maxEnergyConsumption;
     }
 
-    public long getMilkingDuration() {
+    public long getCuttingDuration() {
         return cuttingDuration;
     }
 

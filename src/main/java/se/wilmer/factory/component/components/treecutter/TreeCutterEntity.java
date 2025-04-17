@@ -106,8 +106,12 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
     }
 
     private void updateCutterScheduler() {
-        long newCutterDuration = calculateCurrentCutterDuration(component.getMilkingDuration());
+        long newCutterDuration = calculateCurrentCutterDuration(component.getCuttingDuration());
         if (newCutterDuration == -1 || newCutterDuration == currentCuttingDuration) {
+            if (task != null) {
+                task.cancel();
+            }
+            currentCuttingDuration = newCutterDuration;
             return;
         }
 

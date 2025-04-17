@@ -104,6 +104,10 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
     private void updateMilkScheduler() {
         long newMilkingDuration = calculateCurrentMilkingDuration(component.getMilkingDuration());
         if (newMilkingDuration == -1 || newMilkingDuration == currentMilkingDuration) {
+            if (task != null) {
+                task.cancel();
+            }
+            currentMilkingDuration = newMilkingDuration;
             return;
         }
 
