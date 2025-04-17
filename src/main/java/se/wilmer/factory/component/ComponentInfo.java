@@ -69,17 +69,22 @@ public class ComponentInfo {
     }
 
     private void updateText() {
-        Component component = Component.text("");
+        Component component = Component.empty();
 
-        if (useEnergy && currentEnergy != null && maxEnergy != null) {
+        final boolean showEnergyComponent = useEnergy && currentEnergy != null && maxEnergy != null;
+        if (showEnergyComponent) {
             component = component.append(Component.text("\u26A1").color(NamedTextColor.YELLOW))
                     .appendSpace()
                     .append(Component.text(currentEnergy).color(NamedTextColor.WHITE))
                     .append(Component.text("/").color(NamedTextColor.GRAY))
                     .append(Component.text(maxEnergy).color(NamedTextColor.WHITE));
         }
+
         if (title != null) {
-            component = component.appendNewline().append(Component.text(title).color(NamedTextColor.GOLD));
+            if (showEnergyComponent) {
+                component = component.appendNewline();
+            }
+            component = component.append(Component.text(title).color(NamedTextColor.GOLD));
         }
 
         Optional<UUID> entityUUID = componentEntity.getData().getInformationEntityUUID();
