@@ -79,6 +79,11 @@ public class EnergyNetworkSerializer {
         UUID networkUUID = network.getNetworkID();
         Path path = networkDataPath.resolve(networkUUID.toString() + ".json");
 
+        HashMap<UUID, List<UUID>> componentsConnections = new HashMap<>();
+        for (Map.Entry<UUID, List<UUID>> entry : network.getComponentsConnections().entrySet()) {
+            componentsConnections.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+        }
+
         return CompletableFuture.supplyAsync(() -> {
             ReentrantLock lock = Objects.requireNonNull(this.ioLocks.get(networkUUID));
             lock.lock();
@@ -89,7 +94,8 @@ public class EnergyNetworkSerializer {
                         .build();
 
                 ConfigurationNode node = loader.load();
-                node.set(COMPONENTS_CONNECTIONS_MAP.getType(), new HashMap<>(network.getComponentsConnections()));
+
+                node.set(COMPONENTS_CONNECTIONS_MAP.getType(), componentsConnections);
 
                 loader.save(node);
             } catch (Exception e) {
