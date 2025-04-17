@@ -46,9 +46,8 @@ public class MilkerTask implements Runnable {
         World world = block.getWorld();
         Location location = block.getLocation();
 
-
         Optional<Block> optionalTargetBlock = milkerEntity.getTargetBlock();
-        if (optionalTargetBlock.isEmpty() || !(block.getState() instanceof Container container) || world.getNearbyEntities(optionalTargetBlock.get().getBoundingBox()).stream().noneMatch(livingEntity -> MILKING_ENTITIES.contains(livingEntity.getType()))) {
+        if (optionalTargetBlock.isEmpty() || !(block.getState() instanceof Container container) || world.getNearbyEntities(BoundingBox.of(optionalTargetBlock.get())).stream().noneMatch(livingEntity -> MILKING_ENTITIES.contains(livingEntity.getType()))) {
             return;
         }
 
