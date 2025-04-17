@@ -36,7 +36,6 @@ public class WireSelector {
             return;
         }
 
-
         CustomBlockData firstCustomBlockData = new CustomBlockData(firstBlock, plugin);
         CustomBlockData secondCustomBlockData = firstSelectedList.get(player.getUniqueId());
         if (secondCustomBlockData == null) {
@@ -93,20 +92,14 @@ public class WireSelector {
 
         final ComponentEntity<?> finalFirstComponentEntity = firstComponentEntity;
         final ComponentEntity<?> finalSecondComponentEntity = secondComponentEntity;
-        wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity).thenAccept(connected -> {
-            if (!connected) {
-                return;
+        if (wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity)) {
+            if (isCreateFirstEntity) {
+                finalFirstComponentEntity.load();
             }
-
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                if (isCreateFirstEntity) {
-                    finalFirstComponentEntity.load();
-                }
-                if (isCreateSecondEntity) {
-                    finalSecondComponentEntity.load();
-                }
-            });
-        });
+            if (isCreateSecondEntity) {
+                finalSecondComponentEntity.load();
+            }
+        }
     }
 
     private Optional<ComponentEntity<?>> createComponentEntity(List<Component> components, String componentId, Block block) {

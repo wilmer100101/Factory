@@ -19,25 +19,20 @@ public class WireConnector {
         this.plugin = plugin;
     }
 
-    public CompletableFuture<Boolean> connectComponents(ComponentEntity<?> firstComponent, ComponentEntity<?> secondComponent) {
-        return plugin.getEnergyNetworkManager().getConnector().connectComponents(firstComponent, secondComponent).thenApply(connected -> {
-            if (!connected) {
-                return false;
-            }
+    public boolean connectComponents(ComponentEntity<?> firstComponent, ComponentEntity<?> secondComponent) {
+        if (!plugin.getEnergyNetworkManager().getConnector().connectComponents(firstComponent, secondComponent)) {
+            return false;
+        }
 
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                World world = firstComponent.getBlock().getWorld();
-                Frog firstEntity = spawnWireEntity(world, firstComponent);
-                Frog secondEntity = spawnWireEntity(world, secondComponent);
+        World world = firstComponent.getBlock().getWorld();
+        Frog firstEntity = spawnWireEntity(world, firstComponent);
+        Frog secondEntity = spawnWireEntity(world, secondComponent);
 
-                firstEntity.setLeashHolder(secondEntity);
+        firstEntity.setLeashHolder(secondEntity);
 
-                updateComponentConnections(firstComponent, secondComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
-                updateComponentConnections(secondComponent, firstComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
-            });
-
-            return true;
-        });
+        updateComponentConnections(firstComponent, secondComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+        updateComponentConnections(secondComponent, firstComponent, firstEntity.getUniqueId(), secondEntity.getUniqueId());
+        return true;
     }
 
     private Frog spawnWireEntity(World world, ComponentEntity<?> component) {

@@ -89,7 +89,7 @@ public class EnergyNetworkSerializer {
                         .build();
 
                 ConfigurationNode node = loader.load();
-                node.set(COMPONENTS_CONNECTIONS_MAP.getType(), network.getComponentsConnections());
+                node.set(COMPONENTS_CONNECTIONS_MAP.getType(), new HashMap<>(network.getComponentsConnections()));
 
                 loader.save(node);
             } catch (Exception e) {
