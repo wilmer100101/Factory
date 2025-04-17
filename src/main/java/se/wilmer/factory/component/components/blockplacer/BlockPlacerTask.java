@@ -34,6 +34,9 @@ public class BlockPlacerTask implements Runnable {
             return;
         }
         Block targetBlock = optionalTargetBlock.get();
+        if (!targetBlock.isEmpty()) {
+            return;
+        }
 
         Inventory inventory = container.getInventory();
         for (int i = 0; i < inventory.getContents().length; i++) {
@@ -42,7 +45,7 @@ public class BlockPlacerTask implements Runnable {
                 continue;
             }
             Material type = content.getType();
-            if (!targetBlock.isEmpty() || !targetBlock.canPlace(type.createBlockData())) {
+            if (!targetBlock.canPlace(type.createBlockData())) {
                 continue;
             }
             targetBlock.setType(type);
