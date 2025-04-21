@@ -1,8 +1,6 @@
 package se.wilmer.factory.component;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Interaction;
 import se.wilmer.factory.Factory;
 
 public abstract class Component {

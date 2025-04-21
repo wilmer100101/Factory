@@ -1,0 +1,9 @@
+fuelburner:
+  energy-recipes:
+    melted-stone:
+      material: STONE
+      cooking-duration-ticks: 20
+      supplied-energy: 10
+  info:
+    title: "FuelBurner"
+    display-energy: true

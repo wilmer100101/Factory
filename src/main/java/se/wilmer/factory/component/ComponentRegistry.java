@@ -5,6 +5,8 @@ import se.wilmer.factory.component.components.blockbreaker.BlockBreaker;
 import se.wilmer.factory.component.components.blockbreaker.BlockBreakerConfig;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacer;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacerConfig;
+import se.wilmer.factory.component.components.fuelgenerator.FuelBurner;
+import se.wilmer.factory.component.components.fuelgenerator.FuelBurnerConfig;
 import se.wilmer.factory.component.components.milker.Milker;
 import se.wilmer.factory.component.components.milker.MilkerConfig;
 import se.wilmer.factory.component.components.solarpanel.SolarPanel;
@@ -31,6 +33,7 @@ public class ComponentRegistry {
         components.addAll(new BlockPlacerConfig(plugin, "blockplacer").load());
         components.addAll(new SolarPanelConfig(plugin, "solarpanel").load());
         components.addAll(new MilkerConfig(plugin, "milker").load());
+        components.addAll(new FuelBurnerConfig(plugin, "fuelburner").load());
     }
 
     public List<Component> getComponents() {

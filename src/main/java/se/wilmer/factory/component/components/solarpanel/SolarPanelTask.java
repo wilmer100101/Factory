@@ -23,8 +23,6 @@ public class SolarPanelTask implements Runnable {
 
     @Override
     public void run() {
-        EnergyNetworkManager energyNetworkManager = plugin.getEnergyNetworkManager();
-
         World world = solarPanelEntity.getBlock().getWorld();
         final boolean isDayTime = world.isDayTime();
 
@@ -32,12 +30,10 @@ public class SolarPanelTask implements Runnable {
             isDay = true;
 
             solarPanelEntity.setSuppliedEnergy(solarPanelEntity.getComponent().getSuppliedEnergy());
-            energyNetworkManager.getComponentFromLoadedNetworks(solarPanelEntity).ifPresent(EnergyNetwork::requestEnergyNetworkUpdate);
         } else if (!isDayTime && isDay) {
             isDay = false;
 
             solarPanelEntity.setSuppliedEnergy(0L);
-            energyNetworkManager.getComponentFromLoadedNetworks(solarPanelEntity).ifPresent(EnergyNetwork::requestEnergyNetworkUpdate);
         }
     }
 }

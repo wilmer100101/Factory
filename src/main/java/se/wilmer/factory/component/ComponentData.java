@@ -57,6 +57,7 @@ public abstract class ComponentData {
         CustomBlockData customBlockData = new CustomBlockData(block, plugin);
         if (connections == null) {
             customBlockData.remove(plugin.getComponentManager().getConnectionsKey());
+            return;
         }
         customBlockData.set(plugin.getComponentManager().getConnectionsKey(), DataType.asMap(DataType.UUID, new WireDataType()), connections);
     }
