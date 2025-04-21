@@ -1,4 +1,4 @@
-package se.wilmer.factory.component.components.fuelgenerator;
+package se.wilmer.factory.component.components.fuelburner;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.morepersistentdatatypes.DataType;

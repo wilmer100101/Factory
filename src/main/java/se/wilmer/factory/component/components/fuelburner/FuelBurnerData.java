@@ -1,4 +1,4 @@
-package se.wilmer.factory.component.components.fuelgenerator;
+package se.wilmer.factory.component.components.fuelburner;
 
 import org.bukkit.block.Block;
 import se.wilmer.factory.Factory;

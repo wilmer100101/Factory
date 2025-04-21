@@ -1,21 +1,14 @@
 package se.wilmer.factory.component;
 
 import se.wilmer.factory.Factory;
-import se.wilmer.factory.component.components.blockbreaker.BlockBreaker;
 import se.wilmer.factory.component.components.blockbreaker.BlockBreakerConfig;
-import se.wilmer.factory.component.components.blockplacer.BlockPlacer;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacerConfig;
-import se.wilmer.factory.component.components.fuelgenerator.FuelBurner;
-import se.wilmer.factory.component.components.fuelgenerator.FuelBurnerConfig;
-import se.wilmer.factory.component.components.milker.Milker;
+import se.wilmer.factory.component.components.fuelburner.FuelBurnerConfig;
 import se.wilmer.factory.component.components.milker.MilkerConfig;
-import se.wilmer.factory.component.components.solarpanel.SolarPanel;
 import se.wilmer.factory.component.components.solarpanel.SolarPanelConfig;
-import se.wilmer.factory.component.components.treecutter.TreeCutter;
 import se.wilmer.factory.component.components.treecutter.TreeCutterConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

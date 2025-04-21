@@ -1,4 +1,4 @@
-package se.wilmer.factory.component.components.fuelgenerator;
+package se.wilmer.factory.component.components.fuelburner;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
