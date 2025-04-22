@@ -79,6 +79,12 @@ public class FuelBurnerListener implements Listener {
         }
 
         event.setResult(new ItemStack(Material.AIR));
+
+        plugin.getComponentManager().getComponentEntity(uuid).ifPresent(componentEntity -> {
+            if (componentEntity instanceof FuelBurnerEntity fuelBurnerEntity) {
+                fuelBurnerEntity.setCurrentRecipeKey(null);
+            }
+        });
     }
 
     @EventHandler

@@ -13,13 +13,14 @@ public class FuelBurnerTask implements Runnable {
 
     @Override
     public void run() {
-        Block block = fuelBurnerEntity.getBlock();
-        if (!(block.getState() instanceof Furnace furnace)) {
+        NamespacedKey namespacedKey = fuelBurnerEntity.getCurrentRecipeKey();
+        if (namespacedKey == null) {
+            fuelBurnerEntity.setSuppliedEnergy(0);
             return;
         }
 
-        NamespacedKey namespacedKey = fuelBurnerEntity.getCurrentRecipeKey();
-        if (namespacedKey == null || furnace.getCookTime() <= 0) {
+        Block block = fuelBurnerEntity.getBlock();
+        if (!(block.getState() instanceof Furnace furnace) || furnace.getCookTime() <= 0) {
             fuelBurnerEntity.setSuppliedEnergy(0);
             return;
         }

@@ -12,7 +12,6 @@ import se.wilmer.factory.energy.EnergySupplier;
 public class FuelBurnerEntity extends ComponentEntity<FuelBurner> implements EnergySupplier {
     private final FuelBurnerData data;
     private final BukkitTask task;
-    private ComponentInfo componentInfo = null;
     private long suppliedEnergy = 0L;
     private NamespacedKey currentRecipeKey = null;
 
@@ -25,25 +24,11 @@ public class FuelBurnerEntity extends ComponentEntity<FuelBurner> implements Ene
     }
 
     @Override
-    public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
-    }
-
-    @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
-        }
-    }
-
-    @Override
-    public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
         }
     }
 
@@ -71,9 +56,7 @@ public class FuelBurnerEntity extends ComponentEntity<FuelBurner> implements Ene
 
         plugin.getEnergyNetworkManager().getComponentFromLoadedNetworks(this).ifPresent(EnergyNetwork::requestEnergyNetworkUpdate);
 
-        if (componentInfo != null) {
-            componentInfo.updateEnergy(suppliedEnergy, getMaxSuppliedEnergy());
-        }
+        componentInfo.updateEnergy(suppliedEnergy, getMaxSuppliedEnergy());
     }
 
     public void setCurrentRecipeKey(NamespacedKey currentRecipeKey) {

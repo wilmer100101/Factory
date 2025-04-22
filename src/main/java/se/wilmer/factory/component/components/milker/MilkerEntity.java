@@ -21,7 +21,6 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
     private final MilkerTask milkerTask;
     private Block targetBlock = null;
     private BukkitTask task = null;
-    private ComponentInfo componentInfo;
     private long currentMilkingDuration = 0L;
     private long currentEnergyLimit = 0L;
 
@@ -35,8 +34,7 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
 
     @Override
     public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
+        super.spawn();
 
         updateTargetBlock();
         updateMilkScheduler();
@@ -44,19 +42,17 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
 
     @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
         }
     }
 
     @Override
     public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
-        }
+        super.onBlockChange();
+
         updateTargetBlock();
     }
 
@@ -74,9 +70,7 @@ public class MilkerEntity extends ComponentEntity<Milker> implements EnergyConsu
     public void setCurrentEnergyLimit(long currentEnergyLimit) {
         this.currentEnergyLimit = currentEnergyLimit;
 
-        if (componentInfo != null) {
-            componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
-        }
+        componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
         updateMilkScheduler();
     }
 

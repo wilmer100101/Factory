@@ -18,7 +18,6 @@ import java.util.UUID;
 public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements EnergyConsumer {
     private final TreeCutterData data;
     private final TreeCutterTask treeCutterTask;
-    private ComponentInfo componentInfo;
     private long currentCuttingDuration;
     private BukkitTask task = null;
     private long currentEnergyLimit = 0L;
@@ -34,8 +33,7 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
 
     @Override
     public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
+        super.spawn();
 
         updateTargetBlock();
         updateCutterScheduler();
@@ -43,19 +41,16 @@ public class TreeCutterEntity extends ComponentEntity<TreeCutter> implements Ene
 
     @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
         }
     }
 
     @Override
     public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
-        }
+        super.onBlockChange();
         updateTargetBlock();
     }
 

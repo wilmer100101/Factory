@@ -15,14 +15,12 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BlockBreaker extends Component {
-    private final ComponentInfoSerializer componentInfoSerializer;
     private final long maxEnergyConsumption;
     private final Map<Material, Long> materialBreakDurationTicks;
 
     public BlockBreaker(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long maxEnergyConsumption, Map<Material, Long> materialBreakDurationTicks) {
-        super(plugin, id);
+        super(plugin, id, componentInfoSerializer);
 
-        this.componentInfoSerializer = componentInfoSerializer;
         this.maxEnergyConsumption = maxEnergyConsumption;
         this.materialBreakDurationTicks = materialBreakDurationTicks;
     }
@@ -30,10 +28,6 @@ public class BlockBreaker extends Component {
     @Override
     public ComponentEntity<BlockBreaker> createEntity(Block block) {
         return new BlockBreakerEntity(plugin, this, new BlockBreakerData(plugin, block), block);
-    }
-
-    public ComponentInfoSerializer getComponentInfoSerializer() {
-        return componentInfoSerializer;
     }
 
     public long getMaxEnergyConsumption() {

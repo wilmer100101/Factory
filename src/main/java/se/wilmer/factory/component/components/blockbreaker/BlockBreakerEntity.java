@@ -21,7 +21,6 @@ import java.util.Optional;
 public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> implements EnergyConsumer {
     private final BlockBreakerData data;
     private BukkitTask task = null;
-    private ComponentInfo componentInfo;
     private Block targetBlock = null;
     private float currentBreakingProgress = 0;
     private long currentEnergyLimit = 0L;
@@ -34,8 +33,7 @@ public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> implements
 
     @Override
     public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
+        super.spawn();
 
         updateTargetBlock();
 
@@ -44,19 +42,17 @@ public class BlockBreakerEntity extends ComponentEntity<BlockBreaker> implements
 
     @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
         }
     }
 
     @Override
     public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
-        }
+        super.onBlockChange();
+
         updateTargetBlock();
     }
 

@@ -10,17 +10,14 @@ import se.wilmer.factory.component.ComponentInfoSerializer;
 import java.util.Map;
 
 public class FuelBurner extends Component {
-    private final ComponentInfoSerializer componentInfoSerializer;
     private final Map<FurnaceRecipe, Long> energyRecipes;
     private final long maxSuppliedEnergy;
 
     public FuelBurner(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, Map<FurnaceRecipe, Long> energyRecipes) {
-        super(plugin, id);
+        super(plugin, id, componentInfoSerializer);
 
-        this.componentInfoSerializer = componentInfoSerializer;
         this.energyRecipes = energyRecipes;
-
-        maxSuppliedEnergy = energyRecipes.values().stream().max(Long::compareTo).orElse(0L);
+        this.maxSuppliedEnergy = energyRecipes.values().stream().max(Long::compareTo).orElse(0L);
 
         plugin.getServer().getPluginManager().registerEvents(new FuelBurnerListener(plugin, this), plugin);
     }
@@ -28,10 +25,6 @@ public class FuelBurner extends Component {
     @Override
     public ComponentEntity<FuelBurner> createEntity(Block block) {
         return new FuelBurnerEntity(plugin, this, new FuelBurnerData(plugin, block), block);
-    }
-
-    public ComponentInfoSerializer getComponentInfoSerializer() {
-        return componentInfoSerializer;
     }
 
     public Map<FurnaceRecipe, Long> getEnergyRecipes() {

@@ -22,7 +22,6 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
     private final BlockPlacerData data;
     private BukkitTask task = null;
     private Block targetBlock = null;
-    private ComponentInfo componentInfo;
     private long currentEnergyLimit = 0L;
 
     public BlockPlacerEntity(Factory plugin, BlockPlacer component, BlockPlacerData data, Block block) {
@@ -33,8 +32,7 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
 
     @Override
     public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
+        super.spawn();
 
         updateTargetBlock();
 
@@ -43,19 +41,17 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
 
     @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
         }
     }
 
     @Override
     public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
-        }
+        super.onBlockChange();
+
         updateTargetBlock();
     }
 
@@ -78,9 +74,7 @@ public class BlockPlacerEntity extends ComponentEntity<BlockPlacer> implements E
     public void setCurrentEnergyLimit(long currentEnergyLimit) {
         this.currentEnergyLimit = currentEnergyLimit;
 
-        if (componentInfo != null) {
-            componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
-        }
+        componentInfo.updateEnergy(currentEnergyLimit, getMaxEnergyConsumption());
     }
 
     public Optional<Block> getTargetBlock() {

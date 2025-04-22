@@ -94,10 +94,10 @@ public class WireSelector {
         final ComponentEntity<?> finalSecondComponentEntity = secondComponentEntity;
         if (wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity)) {
             if (isCreateFirstEntity) {
-                finalFirstComponentEntity.load();
+                finalFirstComponentEntity.spawn();
             }
             if (isCreateSecondEntity) {
-                finalSecondComponentEntity.load();
+                finalSecondComponentEntity.spawn();
             }
         }
     }

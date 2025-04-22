@@ -22,7 +22,6 @@ public class TreeCutterConfig extends ComponentConfig<TreeCutter> {
         ConfigurationNode node = optionalNode.get();
 
         List<TreeCutter> treeCutters = new ArrayList<>();
-
         for (ConfigurationNode childNode : node.childrenMap().values()) {
             getTreeCutter(childNode).ifPresent(treeCutters::add);
         }

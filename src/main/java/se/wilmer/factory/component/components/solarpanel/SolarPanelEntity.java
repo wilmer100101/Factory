@@ -10,7 +10,6 @@ import se.wilmer.factory.energy.EnergySupplier;
 
 public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements EnergySupplier {
     private final SolarPanelData data;
-    private ComponentInfo componentInfo = null;
     private BukkitTask task = null;
     private long suppliedEnergy = 0L;
 
@@ -22,26 +21,17 @@ public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements Ene
 
     @Override
     public void spawn() {
-        componentInfo = new ComponentInfo(component.getComponentInfoSerializer(), this);
-        componentInfo.spawn(block.getLocation());
+        super.spawn();
 
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, new SolarPanelTask(plugin, this), 0L, 0L);
     }
 
     @Override
     public void despawn() {
+        super.despawn();
+
         if (task != null) {
             task.cancel();
-        }
-        if (componentInfo != null) {
-            componentInfo.despawn(block.getWorld());
-        }
-    }
-
-    @Override
-    public void onBlockChange() {
-        if (componentInfo != null) {
-            componentInfo.updateLocation();
         }
     }
 
@@ -65,13 +55,10 @@ public class SolarPanelEntity extends ComponentEntity<SolarPanel> implements Ene
         if (energy == suppliedEnergy) {
             return;
         }
-
         this.suppliedEnergy = energy;
 
         plugin.getEnergyNetworkManager().getComponentFromLoadedNetworks(this).ifPresent(EnergyNetwork::requestEnergyNetworkUpdate);
 
-        if (componentInfo != null) {
-            componentInfo.updateEnergy(suppliedEnergy, getMaxSuppliedEnergy());
-        }
+        componentInfo.updateEnergy(suppliedEnergy, getMaxSuppliedEnergy());
     }
 }

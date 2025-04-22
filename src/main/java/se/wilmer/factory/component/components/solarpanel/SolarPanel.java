@@ -7,23 +7,17 @@ import se.wilmer.factory.component.ComponentEntity;
 import se.wilmer.factory.component.ComponentInfoSerializer;
 
 public class SolarPanel extends Component {
-    private final ComponentInfoSerializer componentInfoSerializer;
     private final long suppliedEnergy;
 
     public SolarPanel(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long suppliedEnergy) {
-        super(plugin, id);
+        super(plugin, id, componentInfoSerializer);
 
-        this.componentInfoSerializer = componentInfoSerializer;
         this.suppliedEnergy = suppliedEnergy;
     }
 
     @Override
     public ComponentEntity<SolarPanel> createEntity(Block block) {
         return new SolarPanelEntity(plugin, this, new SolarPanelData(plugin, block), block);
-    }
-
-    public ComponentInfoSerializer getComponentInfoSerializer() {
-        return componentInfoSerializer;
     }
 
     public long getSuppliedEnergy() {

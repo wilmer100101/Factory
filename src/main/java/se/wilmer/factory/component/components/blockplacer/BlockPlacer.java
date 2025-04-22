@@ -11,23 +11,17 @@ import se.wilmer.factory.component.components.blockbreaker.BlockBreakerData;
 import se.wilmer.factory.component.components.blockbreaker.BlockBreakerEntity;
 
 public class BlockPlacer extends Component {
-    private final ComponentInfoSerializer componentInfoSerializer;
     private final long maxEnergyConsumption;
 
     public BlockPlacer(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long maxEnergyConsumption) {
-        super(plugin, id);
+        super(plugin, id, componentInfoSerializer);
 
-        this.componentInfoSerializer = componentInfoSerializer;
         this.maxEnergyConsumption = maxEnergyConsumption;
     }
 
     @Override
     public ComponentEntity<BlockPlacer> createEntity(Block block) {
         return new BlockPlacerEntity(plugin, this, new BlockPlacerData(plugin, block), block);
-    }
-
-    public ComponentInfoSerializer getComponentInfoSerializer() {
-        return componentInfoSerializer;
     }
 
     public long getMaxEnergyConsumption() {

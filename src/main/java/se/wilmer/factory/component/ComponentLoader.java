@@ -47,7 +47,7 @@ public class ComponentLoader {
                     .ifPresent(component ->  {
                         ComponentEntity<?> componentEntity = component.createEntity(block);
                         plugin.getEnergyNetworkManager().loadComponent(componentEntity).thenAccept(unused -> {
-                            componentEntity.load();
+                            componentEntity.spawn();
                         });
 
                     });
@@ -72,7 +72,7 @@ public class ComponentLoader {
 
             componentManager.getComponentEntity(componentUUID).ifPresent(componentEntity -> {
                 energyNetworkManager.unloadComponent(componentEntity);
-                componentEntity.unload();
+                componentEntity.despawn();
             });
         }
     }

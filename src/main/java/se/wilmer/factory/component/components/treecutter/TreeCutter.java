@@ -17,16 +17,14 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TreeCutter extends Component {
-    private final ComponentInfoSerializer componentInfoSerializer;
     private final long maxEnergyConsumption;
     private final long cuttingDuration;
 
     public TreeCutter(Factory plugin, String id, ComponentInfoSerializer componentInfoSerializer, long maxEnergyConsumption, long cuttingDuration) {
-        super(plugin, id);
+        super(plugin, id, componentInfoSerializer);
 
         this.maxEnergyConsumption = maxEnergyConsumption;
         this.cuttingDuration = cuttingDuration;
-        this.componentInfoSerializer = componentInfoSerializer;
     }
 
     @Override
@@ -40,9 +38,5 @@ public class TreeCutter extends Component {
 
     public long getCuttingDuration() {
         return cuttingDuration;
-    }
-
-    public ComponentInfoSerializer getComponentInfoSerializer() {
-        return componentInfoSerializer;
     }
 }
