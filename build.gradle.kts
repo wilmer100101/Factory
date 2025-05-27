@@ -3,7 +3,7 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 plugins {
     `java-library`
     id("com.gradleup.shadow") version "8.3.6"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.14"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0"
 }
@@ -21,13 +21,14 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.5-R0.1-SNAPSHOT")
 
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0-SNAPSHOT")
     implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
-    implementation("com.jeff-media:custom-block-data:2.2.4")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
+
+    implementation(files("libs/custom-block-data-2.2.5.jar"))
 }
 
 tasks {
@@ -48,5 +49,5 @@ tasks {
 
 bukkitPluginYaml {
     main = "se.wilmer.factory.Factory"
-    apiVersion = "1.21.4"
+    apiVersion = "1.21.5"
 }
