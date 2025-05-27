@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+//FIXME: Make it possible to get a specific tool.
 public class ToolRegistry {
     private final Factory plugin;
     private final List<Tool> tools = new ArrayList<>();

@@ -1,0 +1,7 @@
+blockbreaker:
+  name: MyFurnace
+  material: dirt
+  lore:
+    - "This might or might not"
+    - "Be the funniest dirt"
+    - "In the entire world"

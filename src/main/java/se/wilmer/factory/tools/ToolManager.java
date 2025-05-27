@@ -23,4 +23,8 @@ public class ToolManager {
     public NamespacedKey getTypeKey() {
         return typeKey;
     }
+
+    public ToolRegistry getRegistry() {
+        return registry;
+    }
 }

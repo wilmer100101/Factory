@@ -1,0 +1,7 @@
+myrecipeid:
+  "result": "minecraft:dried_kelp"
+  "pattern":
+    - "## "
+    - "###"
+  "keys":
+    "#": "minecraft:dried_kelp"

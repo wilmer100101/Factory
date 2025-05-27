@@ -23,4 +23,8 @@ public abstract class Tool {
         String typeKey = container.get(plugin.getToolManager().getTypeKey(), PersistentDataType.STRING);
         return id.equals(typeKey);
     }
+
+    public String getId() {
+        return id;
+    }
 }

@@ -2,9 +2,9 @@ package se.wilmer.factory.component;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
-import org.bukkit.World;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.wire.WireManager;
+import se.wilmer.factory.item.registries.ItemComponentRegistry;
 
 import java.util.*;
 
@@ -15,6 +15,7 @@ public class ComponentManager {
     private final NamespacedKey typeKey;
     private final NamespacedKey connectionsKey;
     private final NamespacedKey infoKey;
+    private final ItemComponentRegistry itemConfig;
     private final ComponentRegistry registry;
     private final ComponentLoader loader;
     private final ComponentItemConverter itemConverter;
@@ -27,6 +28,7 @@ public class ComponentManager {
         typeKey = new NamespacedKey(plugin, "component_type");
         connectionsKey = new NamespacedKey(plugin, "component_connections");
         infoKey = new NamespacedKey(plugin, "component_info");
+        itemConfig = new ItemComponentRegistry(plugin);
         loader = new ComponentLoader(plugin, this);
         itemConverter = new ComponentItemConverter(plugin, this);
         registry = new ComponentRegistry(plugin);

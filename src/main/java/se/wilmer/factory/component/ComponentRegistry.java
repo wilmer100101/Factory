@@ -5,6 +5,7 @@ import se.wilmer.factory.component.components.blockbreaker.BlockBreakerConfig;
 import se.wilmer.factory.component.components.blockplacer.BlockPlacerConfig;
 import se.wilmer.factory.component.components.fuelburner.FuelBurnerConfig;
 import se.wilmer.factory.component.components.milker.MilkerConfig;
+import se.wilmer.factory.component.components.relay.RelayConfig;
 import se.wilmer.factory.component.components.solarpanel.SolarPanelConfig;
 import se.wilmer.factory.component.components.treecutter.TreeCutterConfig;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//FIXME: Make it possible to get a specific component, or does that even have a use cause?
 public class ComponentRegistry {
     private final Factory plugin;
     private final List<Component> components = new ArrayList<>();
@@ -27,6 +29,7 @@ public class ComponentRegistry {
         components.addAll(new SolarPanelConfig(plugin, "solarpanel").load());
         components.addAll(new MilkerConfig(plugin, "milker").load());
         components.addAll(new FuelBurnerConfig(plugin, "fuelburner").load());
+        components.addAll(new RelayConfig(plugin, "relay").load());
     }
 
     public List<Component> getComponents() {
