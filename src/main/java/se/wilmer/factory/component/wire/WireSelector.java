@@ -47,6 +47,10 @@ public class WireSelector {
         firstSelectedList.remove(player.getUniqueId());
         wireManager.getWireDisplay().removeDisplay(player);
 
+        Block secondBlock = secondCustomBlockData.getBlock();
+        if (secondBlock == null || firstBlock.equals(secondBlock) || !plugin.getComponentManager().getWireManager().isWireOutOfRange(firstBlock.getLocation(), secondBlock.getLocation())) {
+            return;
+        }
         if (tryDisconnectComponents(firstCustomBlockData, secondCustomBlockData)) {
             return;
         }
@@ -73,14 +77,14 @@ public class WireSelector {
         final boolean isCreateSecondEntity;
 
         if (firstComponentEntity == null) {
-            firstComponentEntity = createComponentEntity(components, firstType, firstBlock).orElse(null);
+            firstComponentEntity = findAndCreateComponentEntity(components, firstType, firstBlock).orElse(null);
             isCreateFirstEntity = true;
         } else {
             isCreateFirstEntity = false;
         }
 
         if (secondComponentEntity == null) {
-            secondComponentEntity = createComponentEntity(components, secondType, secondCustomBlockData.getBlock()).orElse(null);
+            secondComponentEntity = findAndCreateComponentEntity(components, secondType, secondCustomBlockData.getBlock()).orElse(null);
             isCreateSecondEntity = true;
         } else {
             isCreateSecondEntity = false;
@@ -102,12 +106,10 @@ public class WireSelector {
         }
     }
 
-    private Optional<ComponentEntity<?>> createComponentEntity(List<Component> components, String componentId, Block block) {
-        Optional<Component> component = components.stream()
+    private Optional<ComponentEntity<?>> findAndCreateComponentEntity(List<Component> components, String componentId, Block block) {
+        return components.stream()
                 .filter(c -> c.getId().equals(componentId))
-                .findAny();
-
-        return component.map(value -> value.createEntity(block));
+                .findAny().map(value -> value.createEntity(block));
     }
 
     private boolean tryDisconnectComponents(CustomBlockData firstCustomBlockData, CustomBlockData secondCustomBlockData) {

@@ -1,5 +1,7 @@
 package se.wilmer.factory.component.wire;
 
+import org.bukkit.Location;
+import org.bukkit.World;
 import se.wilmer.factory.Factory;
 
 public class WireManager {
@@ -20,6 +22,15 @@ public class WireManager {
 
     public void load() {
         wireDisplay.load();
+    }
+
+    public boolean isWireOutOfRange(Location firstBlockLocation, Location secondBlockLocation) {
+        World world = firstBlockLocation.getWorld();
+        if (!world.equals(secondBlockLocation.getWorld())) {
+            return false;
+        }
+
+        return !(firstBlockLocation.distanceSquared(secondBlockLocation) > 100);
     }
 
     public WireConnector getWireConnector() {
