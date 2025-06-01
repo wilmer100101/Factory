@@ -1,11 +1,13 @@
 package se.wilmer.factory.component.wire;
 
+import net.minecraft.util.datafix.fixes.EntityFallDistanceFloatToDoubleFix;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Frog;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentData;
@@ -45,11 +47,12 @@ public class WireConnector {
             frog.setGravity(false);
             frog.setInvulnerable(true);
             frog.setInvisible(true);
+            frog.setCollidable(false);
 
             AttributeInstance attribute = frog.getAttribute(Attribute.SCALE);
             if (attribute != null) {
                 // Seems to be a bug, where the rope disappears if the entity it's connected to, is too small
-                attribute.setBaseValue(0.0625 * 2);
+                attribute.setBaseValue(0.5);
             }
         });
     }
