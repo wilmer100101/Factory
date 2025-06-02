@@ -31,6 +31,7 @@ public class BlockLookUpCommand {
 
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("blocklookup")
+                .requires(sender -> sender.getExecutor() instanceof Player player && player.hasPermission("factory.command.debug.blocklookup"))
                 .executes(this::retrieveBlockData);
     }
 

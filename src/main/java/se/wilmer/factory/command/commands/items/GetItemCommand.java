@@ -29,7 +29,7 @@ public class GetItemCommand {
         return Commands.literal("get")
                 .requires(ctx -> ctx.getExecutor() instanceof Player)
                 .then(Commands.argument("key", StringArgumentType.word())
-                        .requires(sender -> sender.getExecutor() instanceof Player)
+                        .requires(sender -> sender.getExecutor() instanceof Player player && player.hasPermission("factory.command.items.getitem"))
                         .suggests((ctx, builder) -> CompletableFuture.supplyAsync(() -> {
                             plugin.getItemManager().getKeys().stream()
                                     .map(NamespacedKey::getKey).toList().stream()
