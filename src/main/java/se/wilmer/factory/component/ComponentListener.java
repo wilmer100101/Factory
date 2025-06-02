@@ -33,11 +33,6 @@ public class ComponentListener implements Listener {
     @EventHandler
     public void onCustomBlockDataRemove(CustomBlockDataRemoveEvent event) {
         componentManager.getItemConverter().toItem(event);
-
-        UUID uuid = event.getCustomBlockData().get(componentManager.getUUIDKey(), DataType.UUID);
-        if (uuid != null) {
-            componentManager.getComponentEntity(uuid).ifPresent(componentEntity -> componentManager.getWireManager().getWireDisconnector().disconnectAllComponents(componentEntity));
-        }
     }
 
     @EventHandler

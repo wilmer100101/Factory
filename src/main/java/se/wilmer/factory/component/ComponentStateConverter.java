@@ -43,6 +43,7 @@ public class ComponentStateConverter {
 
     public void toItem(CustomBlockDataRemoveEvent event) {
         transferDataFromBlock(event).flatMap(componentManager::getComponentEntity).ifPresent(componentEntity -> {
+            componentManager.getWireManager().getWireDisconnector().disconnectAllComponents(componentEntity);
             plugin.getEnergyNetworkManager().unloadComponent(componentEntity);
             componentEntity.despawn();
         });
