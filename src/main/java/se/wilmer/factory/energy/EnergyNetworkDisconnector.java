@@ -93,6 +93,8 @@ public class EnergyNetworkDisconnector {
         final boolean shouldRemoveSecondComponent = secondNetworkComponents.size() <= 1;
 
         if (shouldRemoveFirstComponent && shouldRemoveSecondComponent) {
+            removeSavedEnergy(firstComponent);
+            removeSavedEnergy(secondComponent);
             return;
         } else if (shouldRemoveFirstComponent) {
             UUID uuid = firstComponent.getUUID();
@@ -100,6 +102,7 @@ public class EnergyNetworkDisconnector {
             secondNetworkComponents.remove(uuid);
             EnergyNetwork newEnergyNetwork = createNewNetwork(clonedComponentsConnections, secondNetworkComponents);
 
+            removeSavedEnergy(firstComponent);
             serializer.deserializeNetwork(newEnergyNetwork);
             return;
         } else if (shouldRemoveSecondComponent) {
@@ -108,6 +111,7 @@ public class EnergyNetworkDisconnector {
             firstNetworkComponents.remove(uuid);
             EnergyNetwork newEnergyNetwork = createNewNetwork(clonedComponentsConnections, firstNetworkComponents);
 
+            removeSavedEnergy(secondComponent);
             serializer.deserializeNetwork(newEnergyNetwork);
             return;
         }
@@ -161,5 +165,16 @@ public class EnergyNetworkDisconnector {
         });
 
         return connectedComponents;
+    }
+
+    /**
+     * If the component has saved energy that does no longer belongs to the component, will that energy be removed.
+     *
+     * @param energyComponent The component to remove the energy from.
+     */
+    private void removeSavedEnergy(EnergyComponent energyComponent) {
+        if (energyComponent instanceof EnergyConsumer energyConsumer) {
+            energyConsumer.setCurrentEnergyLimit(0);
+        }
     }
 }

@@ -57,8 +57,9 @@ public class BlockLookUpCommand {
         String componentType = customBlockData.get(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING);
         UUID componentUUID = customBlockData.get(plugin.getComponentManager().getUUIDKey(), DataType.UUID);
         Map<UUID, Wire> connectedWires = customBlockData.get(plugin.getComponentManager().getConnectionsKey(), DataType.asMap(DataType.UUID, new WireDataType()));
+        UUID info = customBlockData.get(plugin.getComponentManager().getInfoKey(), DataType.UUID);
 
-        Component initialTextComponents = getInitialTextComponents(componentType, componentUUID, connectedWires);
+        Component initialTextComponents = getInitialTextComponents(componentType, componentUUID, connectedWires, info);
         player.sendMessage(initialTextComponents);
         plugin.getComponentLogger().info(initialTextComponents);
 
@@ -84,10 +85,12 @@ public class BlockLookUpCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private Component getInitialTextComponents(String componentType, UUID componentUUID, Map<UUID, Wire> connectedWires) {
+    private Component getInitialTextComponents(String componentType, UUID componentUUID, Map<UUID, Wire> connectedWires, UUID info) {
         Component blockLookUpText = Component.text("ComponentType:", NamedTextColor.GRAY).appendSpace().append(Component.text(componentType == null ? "null" : componentType, NamedTextColor.YELLOW))
                 .appendNewline()
                 .append(Component.text("ComponentUUID:", NamedTextColor.GRAY).appendSpace().append(Component.text(componentUUID == null ? "null" : componentUUID.toString(), NamedTextColor.YELLOW)))
+                .appendNewline()
+                .append(Component.text("Info:", NamedTextColor.GRAY).appendSpace().append(Component.text(info == null ? "null" : info.toString(), NamedTextColor.YELLOW)))
                 .appendNewline()
                 .append(Component.text("ConnectedWires:", NamedTextColor.GRAY).appendSpace().append(Component.text(connectedWires == null ? "null" : "", NamedTextColor.YELLOW)));
 

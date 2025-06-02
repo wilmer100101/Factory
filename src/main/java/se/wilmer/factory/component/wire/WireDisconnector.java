@@ -27,6 +27,9 @@ public class WireDisconnector {
 
             componentManager.getComponentEntity(secondUUID).ifPresent(secondComponent -> disconnectComponents(firstComponent, secondComponent));
         }
+
+        firstComponent.despawn();
+        firstComponent.spawn();
     }
 
     public boolean disconnectComponents(ComponentEntity<?> firstComponent, ComponentEntity<?> secondComponent) {
@@ -60,6 +63,15 @@ public class WireDisconnector {
 
         firstData.setConnections(firstConnections);
         secondData.setConnections(secondConnections);
+
+        if (firstConnections.isEmpty()) {
+            firstComponent.despawn();
+            firstComponent.spawn();
+        }
+        if (secondConnections.isEmpty()) {
+            secondComponent.despawn();
+            secondComponent.spawn();
+        }
         return true;
     }
 }

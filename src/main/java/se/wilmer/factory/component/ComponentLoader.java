@@ -8,8 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import se.wilmer.factory.Factory;
+import se.wilmer.factory.component.wire.Wire;
+import se.wilmer.factory.component.wire.WireDataType;
 import se.wilmer.factory.energy.EnergyNetworkManager;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class ComponentLoader {
@@ -37,7 +40,8 @@ public class ComponentLoader {
                 continue;
             }
 
-            final boolean isConnectedToNetwork = customBlockData.has(componentManager.getConnectionsKey());
+            Map<UUID, Wire> connectedWires = customBlockData.get(plugin.getComponentManager().getConnectionsKey(), DataType.asMap(DataType.UUID, new WireDataType()));
+            final boolean isConnectedToNetwork = connectedWires != null && !connectedWires.isEmpty();
 
             componentManager.getRegistry().getComponents().stream()
                     .filter(component -> component.getId().equals(componentId))
