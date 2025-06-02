@@ -1,5 +1,6 @@
 package se.wilmer.factory.component;
 
+import com.jeff_media.customblockdata.events.CustomBlockDataMoveEvent;
 import com.jeff_media.customblockdata.events.CustomBlockDataRemoveEvent;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import org.bukkit.block.Block;
@@ -25,8 +26,13 @@ public class ComponentListener implements Listener {
     }
 
     @EventHandler
+    public void onCustomBlockDataMove(CustomBlockDataMoveEvent event) {
+        componentManager.getItemConverter().toNewLocation(event);
+    }
+
+    @EventHandler
     public void onCustomBlockDataRemove(CustomBlockDataRemoveEvent event) {
-        componentManager.getItemConverter().transferDataFromBlock(event);
+        componentManager.getItemConverter().toItem(event);
 
         UUID uuid = event.getCustomBlockData().get(componentManager.getUUIDKey(), DataType.UUID);
         if (uuid != null) {
@@ -36,7 +42,7 @@ public class ComponentListener implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        componentManager.getItemConverter().transferDataFromItem(event);
+        componentManager.getItemConverter().toBlock(event);
     }
 
     @EventHandler

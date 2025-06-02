@@ -22,7 +22,7 @@ public class ComponentLoader {
     }
 
     /**
-     * Loads all the components in the chunk, if a component is not connected to a network, will it not be loaded.
+     * Loads all the components in the chunk, if a component is not connected to a network, will it not be loaded, but spawned.
      *
      * @param chunk The loaded chunk.
      */
@@ -32,24 +32,24 @@ public class ComponentLoader {
         for (Block block : CustomBlockData.getBlocksWithCustomData(plugin, chunk)) {
             final PersistentDataContainer customBlockData = new CustomBlockData(block, plugin);
 
-            if (!customBlockData.has(componentManager.getConnectionsKey())) {
-                continue;
-            }
-
             String componentId = customBlockData.get(componentTypeKey, PersistentDataType.STRING);
             if (componentId == null) {
                 continue;
             }
+
+            final boolean isConnectedToNetwork = customBlockData.has(componentManager.getConnectionsKey());
 
             componentManager.getRegistry().getComponents().stream()
                     .filter(component -> component.getId().equals(componentId))
                     .findAny()
                     .ifPresent(component ->  {
                         ComponentEntity<?> componentEntity = component.createEntity(block);
-                        plugin.getEnergyNetworkManager().loadComponent(componentEntity).thenAccept(unused -> {
-                            componentEntity.spawn();
-                        });
 
+                        if (isConnectedToNetwork) {
+                            plugin.getEnergyNetworkManager().loadComponent(componentEntity).thenAccept(unused -> plugin.getServer().getScheduler().runTask(plugin, componentEntity::spawn));
+                        } else {
+                            componentEntity.spawn();
+                        }
                     });
         }
     }

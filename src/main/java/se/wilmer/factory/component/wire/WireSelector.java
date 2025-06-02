@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import se.wilmer.factory.Factory;
-import se.wilmer.factory.component.Component;
 import se.wilmer.factory.component.ComponentEntity;
 import se.wilmer.factory.component.ComponentManager;
 
@@ -64,52 +63,11 @@ public class WireSelector {
             return;
         }
 
-        tryConnectComponents(firstBlock, firstUUID, secondUUID, firstType, secondType, secondCustomBlockData);
-    }
-
-    private void tryConnectComponents(Block firstBlock, UUID firstUUID, UUID secondUUID, String firstType, String secondType, CustomBlockData secondCustomBlockData) {
-        ComponentManager componentManager = plugin.getComponentManager();
-        List<Component> components = plugin.getComponentManager().getRegistry().getComponents();
         ComponentEntity<?> firstComponentEntity = componentManager.getComponentEntity(firstUUID).orElse(null);
         ComponentEntity<?> secondComponentEntity = componentManager.getComponentEntity(secondUUID).orElse(null);
-
-        final boolean isCreateFirstEntity;
-        final boolean isCreateSecondEntity;
-
-        if (firstComponentEntity == null) {
-            firstComponentEntity = findAndCreateComponentEntity(components, firstType, firstBlock).orElse(null);
-            isCreateFirstEntity = true;
-        } else {
-            isCreateFirstEntity = false;
+        if (firstComponentEntity != null && secondComponentEntity != null) {
+            wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity);
         }
-
-        if (secondComponentEntity == null) {
-            secondComponentEntity = findAndCreateComponentEntity(components, secondType, secondCustomBlockData.getBlock()).orElse(null);
-            isCreateSecondEntity = true;
-        } else {
-            isCreateSecondEntity = false;
-        }
-
-        if (firstComponentEntity == null || secondComponentEntity == null) {
-            return;
-        }
-
-        final ComponentEntity<?> finalFirstComponentEntity = firstComponentEntity;
-        final ComponentEntity<?> finalSecondComponentEntity = secondComponentEntity;
-        if (wireManager.getWireConnector().connectComponents(firstComponentEntity, secondComponentEntity)) {
-            if (isCreateFirstEntity) {
-                finalFirstComponentEntity.spawn();
-            }
-            if (isCreateSecondEntity) {
-                finalSecondComponentEntity.spawn();
-            }
-        }
-    }
-
-    private Optional<ComponentEntity<?>> findAndCreateComponentEntity(List<Component> components, String componentId, Block block) {
-        return components.stream()
-                .filter(c -> c.getId().equals(componentId))
-                .findAny().map(value -> value.createEntity(block));
     }
 
     private boolean tryDisconnectComponents(CustomBlockData firstCustomBlockData, CustomBlockData secondCustomBlockData) {

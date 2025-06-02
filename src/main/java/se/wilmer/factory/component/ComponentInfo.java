@@ -71,17 +71,15 @@ public class ComponentInfo {
     private void updateText() {
         Component component = Component.empty();
 
-        final boolean showEnergyComponent = useEnergy && currentEnergy != null && maxEnergy != null;
-        if (showEnergyComponent) {
+        if (useEnergy) {
             component = component.append(Component.text("\u26A1").color(NamedTextColor.YELLOW))
                     .appendSpace()
-                    .append(Component.text(currentEnergy).color(NamedTextColor.WHITE))
+                    .append(Component.text(currentEnergy != null ? currentEnergy : 0).color(NamedTextColor.WHITE))
                     .append(Component.text("/").color(NamedTextColor.GRAY))
-                    .append(Component.text(maxEnergy).color(NamedTextColor.WHITE));
+                    .append(Component.text(maxEnergy != null ? maxEnergy : 0).color(NamedTextColor.WHITE));
         }
-
         if (title != null) {
-            if (showEnergyComponent) {
+            if (useEnergy) {
                 component = component.appendNewline();
             }
             component = component.append(Component.text(title).color(NamedTextColor.GOLD));

@@ -1,5 +1,6 @@
 package se.wilmer.factory.energy;
 
+import org.jetbrains.annotations.NotNull;
 import se.wilmer.factory.Factory;
 
 import java.util.*;

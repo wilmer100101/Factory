@@ -12,6 +12,7 @@ import se.wilmer.factory.component.components.treecutter.TreeCutterConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 //FIXME: Make it possible to get a specific component, or does that even have a use cause?
 public class ComponentRegistry {
@@ -34,5 +35,9 @@ public class ComponentRegistry {
 
     public List<Component> getComponents() {
         return Collections.unmodifiableList(components);
+    }
+
+    public Optional<Component> getComponentByID(String id) {
+        return components.stream().filter(component -> component.getId().equals(id)).findAny();
     }
 }
