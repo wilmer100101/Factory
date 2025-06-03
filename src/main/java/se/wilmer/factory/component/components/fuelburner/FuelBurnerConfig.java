@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.N;
 import org.spongepowered.configurate.ConfigurationNode;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentConfig;
@@ -49,9 +50,7 @@ public class FuelBurnerConfig extends ComponentConfig<FuelBurner> {
 
     private Map<FurnaceRecipe, Long> getEnergyRecipes(ConfigurationNode node, String componentID) {
         Map<FurnaceRecipe, Long> energyRecipes = new HashMap<>();
-
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, componentID);
-
+        
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : node.childrenMap().entrySet()) {
             String id = String.valueOf(entry.getKey());
 
@@ -74,7 +73,7 @@ public class FuelBurnerConfig extends ComponentConfig<FuelBurner> {
                 continue;
             }
 
-            FurnaceRecipe cookingRecipe = new FurnaceRecipe(namespacedKey, RESULT_ITEM, material, 0, cookingDurationTicks);
+            FurnaceRecipe cookingRecipe = new FurnaceRecipe(new NamespacedKey(plugin, id), RESULT_ITEM, material, 0, cookingDurationTicks);
             plugin.getServer().addRecipe(cookingRecipe);
 
             energyRecipes.put(cookingRecipe, suppliedEnergy);
