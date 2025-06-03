@@ -44,8 +44,8 @@ public class ComponentInfo {
             Entity entity = world.getEntity(uuid);
             if (entity != null) {
                 entity.remove();
+                data.setInformationEntityUUID(null);
             }
-            data.setInformationEntityUUID(null);
         });
     }
 
