@@ -1,5 +1,7 @@
 package se.wilmer.factory.component.components.blockplacer;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.spongepowered.configurate.ConfigurationNode;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.ComponentConfig;
@@ -44,6 +46,27 @@ public class BlockPlacerConfig extends ComponentConfig<BlockPlacer> {
             return Optional.empty();
         }
 
-        return Optional.of(new BlockPlacer(plugin, id, infoSerializer, maxEnergyConsumption));
+        return Optional.of(new BlockPlacer(plugin, id, infoSerializer, maxEnergyConsumption, getAllowedMaterials(node, id)));
+    }
+
+    private List<Material> getAllowedMaterials(ConfigurationNode node, String id) {
+        List<Material> allowedMaterials = new ArrayList<>();
+
+        for (ConfigurationNode childrenNode : node.node("allowed-materials").childrenList()) {
+            String materialName = childrenNode.getString();
+            if (materialName == null) {
+                plugin.getComponentLogger().warn("Could not get materialName, while fetching material-blocks for: {}", id);
+                continue;
+            }
+            Material material = Material.matchMaterial(materialName);
+            if (material == null) {
+                plugin.getComponentLogger().warn("Could not match material, while fetching material-blocks for: {}, materialName: {}", id, materialName);
+                continue;
+            }
+
+            allowedMaterials.add(material);
+        }
+
+        return allowedMaterials;
     }
 }

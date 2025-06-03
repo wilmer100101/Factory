@@ -43,7 +43,7 @@ public class BlockPlacerTask implements Runnable {
                 continue;
             }
             Material type = content.getType();
-            if (!targetBlock.canPlace(type.createBlockData())) {
+            if (!targetBlock.canPlace(type.createBlockData()) || !blockPlacerEntity.getComponent().getAllowedMaterials().contains(content.getType())) {
                 continue;
             }
             targetBlock.setType(type);
