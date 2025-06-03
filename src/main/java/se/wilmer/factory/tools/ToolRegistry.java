@@ -2,6 +2,7 @@ package se.wilmer.factory.tools;
 
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.component.Component;
+import se.wilmer.factory.tools.connector.Connector;
 import se.wilmer.factory.tools.multimeter.Multimeter;
 
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ public class ToolRegistry {
         Multimeter multimeter = new Multimeter(plugin);
         multimeter.load();
         tools.add(multimeter);
+
+        Connector connector = new Connector(plugin);
+        connector.load();
+        tools.add(connector);
     }
 
     public List<Tool> getTools() {

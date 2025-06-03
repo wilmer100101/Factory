@@ -51,19 +51,6 @@ public class ComponentListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        ItemStack itemStack = event.getItem();
-        if (itemStack == null) {
-            return;
-        }
-        Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
-        componentManager.getWireManager().getWireSelector().selectComponent(event.getPlayer(), block, itemStack);
-    }
-
-    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();

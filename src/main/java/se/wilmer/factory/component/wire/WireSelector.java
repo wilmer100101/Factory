@@ -15,8 +15,6 @@ import se.wilmer.factory.component.ComponentManager;
 import java.util.*;
 
 public class WireSelector {
-    private static final ItemStack WIRE_ITEM = new ItemStack(Material.COPPER_INGOT);
-
     private final Factory plugin;
     private final WireManager wireManager;
     private final Map<UUID, CustomBlockData> firstSelectedList = new HashMap<>();
@@ -30,11 +28,7 @@ public class WireSelector {
         firstSelectedList.remove(uuid);
     }
 
-    public void selectComponent(Player player, Block firstBlock, ItemStack mainHand) {
-        if (!mainHand.isSimilar(WIRE_ITEM)) {
-            return;
-        }
-
+    public void selectComponent(Player player, Block firstBlock) {
         CustomBlockData firstCustomBlockData = new CustomBlockData(firstBlock, plugin);
         CustomBlockData secondCustomBlockData = firstSelectedList.get(player.getUniqueId());
         if (secondCustomBlockData == null) {

@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemToolRegistry extends ItemRegistry {
-    private static final Path COMPONENTS_ITEMS_FILE = Path.of("items").resolve("tool_items.yml");
+public class ItemDefaultRegistry extends ItemRegistry {
+    private static final Path COMPONENTS_ITEMS_FILE = Path.of("items").resolve("items.yml");
 
-    public ItemToolRegistry(Factory plugin) {
+    public ItemDefaultRegistry(Factory plugin) {
         super(plugin, COMPONENTS_ITEMS_FILE);
     }
 
@@ -39,17 +39,9 @@ public class ItemToolRegistry extends ItemRegistry {
         ItemStack itemStack = optionalItemStack.get();
 
         if (!(key instanceof String itemId)) {
-            plugin.getComponentLogger().error("Could not get toolId, while fetching tool items");
+            plugin.getComponentLogger().error("Could not get itemId, while fetching items");
             return Optional.empty();
         }
-
-        String toolId = value.node("tool-id").getString();
-        if (toolId == null || toolId.isEmpty()) {
-            plugin.getComponentLogger().error("Could not get toolId, while fetching component items");
-            return Optional.empty();
-        }
-
-        itemStack.editPersistentDataContainer(pdc -> pdc.set(plugin.getToolManager().getTypeKey(), PersistentDataType.STRING, toolId));
 
         return Optional.of(new Item(itemStack, new NamespacedKey(plugin, itemId)));
     }

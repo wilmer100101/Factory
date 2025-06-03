@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import se.wilmer.factory.Factory;
 import se.wilmer.factory.item.registries.ItemComponentRegistry;
+import se.wilmer.factory.item.registries.ItemDefaultRegistry;
 import se.wilmer.factory.item.registries.ItemToolRegistry;
 
 import java.util.ArrayList;
@@ -29,7 +30,8 @@ public class ItemManager {
 
         registries = List.of(
                 new ItemToolRegistry(plugin),
-                new ItemComponentRegistry(plugin)
+                new ItemComponentRegistry(plugin),
+                new ItemDefaultRegistry(plugin)
         );
     }
 

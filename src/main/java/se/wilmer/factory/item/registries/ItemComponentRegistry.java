@@ -38,13 +38,19 @@ public class ItemComponentRegistry extends ItemRegistry {
         }
         ItemStack itemStack = optionalItemStack.get();
 
-        if (!(key instanceof String componentId)) {
+        if (!(key instanceof String itemId)) {
+            plugin.getComponentLogger().error("Could not get componentId, while fetching component items");
+            return Optional.empty();
+        }
+
+        String componentId = value.node("component-id").getString();
+        if (componentId == null || componentId.isEmpty()) {
             plugin.getComponentLogger().error("Could not get componentId, while fetching component items");
             return Optional.empty();
         }
 
         itemStack.editPersistentDataContainer(pdc -> pdc.set(plugin.getComponentManager().getTypeKey(), PersistentDataType.STRING, componentId));
 
-        return Optional.of(new Item(itemStack, new NamespacedKey(plugin, componentId)));
+        return Optional.of(new Item(itemStack, new NamespacedKey(plugin, itemId)));
     }
 }
