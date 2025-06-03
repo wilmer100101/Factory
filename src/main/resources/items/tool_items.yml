@@ -1,0 +1,17 @@
+multimeter:
+  tool-id: multimeter
+  name: Multimeter
+  material: clock
+  lore:
+    - "This might or might not"
+    - "Be the funniest dirt"
+    - "In the entire world"
+
+connector:
+  tool-id: connector
+  name: Connector
+  material: copper_ingot
+  lore:
+    - "This might or might not"
+    - "Be the funniest dirt"
+    - "In the entire world"

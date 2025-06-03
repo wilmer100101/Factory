@@ -1,6 +1,6 @@
-treecutter:
+treecutter-component:
   max-energy-consumption: 10
-  cutting-tick-interval: 10
+  cutting-tick-interval: 10 # The interval in ticks between cutting each block.
   info:
     title: "TreeCutter"
     display-energy: true

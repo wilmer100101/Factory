@@ -1,9 +1,21 @@
-fuelburner:
-  energy-recipes:
-    melted-stone:
-      material: STONE
+coal-fuelburner-component:
+  energy-recipes: # List of recipes
+    melted-coal: # The recipe id
+      material: COAL
       cooking-duration-ticks: 20
       supplied-energy: 10
+    melted-coal-ore: # The recipe id
+      material: COAL_ORE
+      cooking-duration-ticks: 40
+      supplied-energy: 10
+    melted-deepslate-coal-ore: # The recipe id
+      material: DEEPSLATE_COAL_ORE
+      cooking-duration-ticks: 70
+      supplied-energy: 10
+    melted-coal-block: # The recipe id
+      material: COAL_BLOCK
+      cooking-duration-ticks: 110
+      supplied-energy: 90
   info:
     title: "FuelBurner"
     display-energy: true

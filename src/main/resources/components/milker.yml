@@ -1,6 +1,6 @@
-milker:
+milker-component:
   max-energy-consumption: 10
-  milking-tick-interval: 10
+  milking-tick-interval: 10 # The amount of ticks until next milking
   info:
     title: "Milker"
     display-energy: true

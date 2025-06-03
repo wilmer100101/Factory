@@ -1,11 +1,9 @@
-blockbreaker:
+ore-blockbreaker-component:
   max-energy-consumption: 10
-  material-blocks-duration:
-    STONE: 3000
-    IRON_ORE: 5500
-    DIAMOND_BLOCK: 10000
-    COBBLESTONE: 2000
-    GOLD_INGOT: 7000
+  material-blocks-duration: # List of blocks with duration in ticks.
+    COAL_ORE: 1000
+    IRON_ORE: 2000
+    DIAMOND_ORE: 3000
   info:
     title: "BlockBreaker"
     display-energy: true

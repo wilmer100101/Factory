@@ -1,4 +1,4 @@
-solarpanel:
+solarpanel-component:
   supplied-energy: 50
   info:
     title: "SolarPanel"

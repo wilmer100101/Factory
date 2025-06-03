@@ -1,5 +1,8 @@
-blockplacer:
+stone-blockplacer-component:
   max-energy-consumption: 10
+  allowed-materials: # List of blocks that is allowed to place.
+    - STONE
+    - COBBLESTONE
   info:
     title: "BlockPlacer"
     display-energy: true

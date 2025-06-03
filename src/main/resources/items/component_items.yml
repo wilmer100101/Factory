@@ -1,7 +1,62 @@
 blockbreaker:
-  name: MyFurnace
-  material: dirt
+  component-id: ore-blockbreaker-component
+  name: BlockBreaker
+  material: dispenser
   lore:
     - "This might or might not"
-    - "Be the funniest dirt"
+    - "Be the funniest block"
+    - "In the entire world"
+
+blockplacer:
+  component-id: stone-blockplacer-component
+  name: BlockPlacer
+  material: dispenser
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
+    - "In the entire world"
+
+treecutter:
+  component-id: treecutter-component
+  name: TreeCutter
+  material: dispenser
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
+    - "In the entire world"
+
+solarpanel:
+  component-id: solarpanel-component
+  name: SolarPanel
+  material: daylight_detector
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
+    - "In the entire world"
+
+fence-relay:
+  component-id: relay-component
+  name: Fence Relay
+  material: spruce_fence
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
+    - "In the entire world"
+
+milker:
+  component-id: milker-component
+  name: Milker
+  material: dispenser
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
+    - "In the entire world"
+
+fuelburner:
+  component-id: coal-fuelburner-component
+  name: FuelBurner
+  material: furnace
+  lore:
+    - "This might or might not"
+    - "Be the funniest block"
     - "In the entire world"

@@ -1,7 +1,7 @@
-myrecipeid:
-  "result": "minecraft:dried_kelp"
+connector-recipe:
+  "result": "factory:connector"
   "pattern":
-    - "## "
-    - "###"
+    - "C  "
+    - "C  "
   "keys":
-    "#": "minecraft:dried_kelp"
+    "C": "minecraft:copper_ingot"
