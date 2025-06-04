@@ -1,4 +1,4 @@
-stone-blockplacer-component:
+stone-blockplacer:
   max-energy-consumption: 10
   allowed-materials: # List of blocks that is allowed to place.
     - STONE

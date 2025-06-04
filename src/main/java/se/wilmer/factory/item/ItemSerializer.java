@@ -3,6 +3,7 @@ package se.wilmer.factory.item;
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -62,9 +63,10 @@ public class ItemSerializer {
 
         ItemStack item = new ItemStack(optionalMaterial.get());
         item.editMeta(itemMeta -> {
-            itemMeta.displayName(miniMessage.deserialize(name));
+            itemMeta.displayName(miniMessage.deserialize(name).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
             itemMeta.lore(getLoreComponents(configurationNode, name, miniMessage));
         });
+
         return Optional.of(item);
     }
 
@@ -76,7 +78,7 @@ public class ItemSerializer {
                 plugin.getComponentLogger().error("Missing lore, when trying to deserialize item: {}", name);
                 continue;
             }
-            loreComponents.add(miniMessage.deserialize(lore));
+            loreComponents.add(miniMessage.deserialize(lore).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
 
         return loreComponents;

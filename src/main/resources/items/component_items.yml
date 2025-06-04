@@ -1,5 +1,5 @@
 blockbreaker:
-  component-id: ore-blockbreaker-component
+  component-id: ore-blockbreaker
   name: BlockBreaker
   material: dispenser
   lore:
@@ -8,7 +8,7 @@ blockbreaker:
     - "In the entire world"
 
 blockplacer:
-  component-id: stone-blockplacer-component
+  component-id: stone-blockplacer
   name: BlockPlacer
   material: dispenser
   lore:
@@ -17,7 +17,7 @@ blockplacer:
     - "In the entire world"
 
 treecutter:
-  component-id: treecutter-component
+  component-id: treecutter
   name: TreeCutter
   material: dispenser
   lore:
@@ -26,7 +26,7 @@ treecutter:
     - "In the entire world"
 
 solarpanel:
-  component-id: solarpanel-component
+  component-id: solarpanel
   name: SolarPanel
   material: daylight_detector
   lore:
@@ -35,7 +35,7 @@ solarpanel:
     - "In the entire world"
 
 fence-relay:
-  component-id: relay-component
+  component-id: relay
   name: Fence Relay
   material: spruce_fence
   lore:
@@ -44,7 +44,7 @@ fence-relay:
     - "In the entire world"
 
 milker:
-  component-id: milker-component
+  component-id: milker
   name: Milker
   material: dispenser
   lore:
@@ -53,7 +53,7 @@ milker:
     - "In the entire world"
 
 fuelburner:
-  component-id: coal-fuelburner-component
+  component-id: coal-fuelburner
   name: FuelBurner
   material: furnace
   lore:

@@ -1,4 +1,4 @@
-coal-fuelburner-component:
+coal-fuelburner:
   energy-recipes: # List of recipes
     melted-coal: # The recipe id
       material: COAL

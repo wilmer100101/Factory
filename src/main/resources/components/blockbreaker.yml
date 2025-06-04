@@ -1,4 +1,4 @@
-ore-blockbreaker-component:
+ore-blockbreaker:
   max-energy-consumption: 10
   material-blocks-duration: # List of blocks with duration in ticks.
     COAL_ORE: 1000

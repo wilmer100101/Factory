@@ -3,3 +3,5 @@
 /.idea/
 /.gradle/
 /src/main/java/se/wilmer/factory/test/
+/src/main/java/se/wilmer/factory/component/ponder/
+/src/main/java/se/wilmer/factory/debug/
